@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<activities headertext="Activities for Adjectives">
+  
+  <!-- (L1) QUALITY QUANTITY Begin-->
+  <!--Basic - Begin-->
+  <activity adjectiveGroupId="adjective_2a" qId="1" stage="1" titletext="Click on the adjective in the sentence." display="It is a bright day." answer="bright" BloomsTaxonomy="1" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2a" qId="2" stage="1" titletext="Click on the adjective in the sentence." display="There isn't much milk in the glass." answer="much" BloomsTaxonomy="1" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2a" qId="3" stage="1" titletext="Click on the adjective in the sentence." display="The yellow car had an accident." answer="yellow" BloomsTaxonomy="1" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2a" qId="4" stage="1" titletext="Click on the adjective in the sentence." display="The garden was filled with beautiful flowers." answer="beautiful" BloomsTaxonomy="1" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2a" qId="5" stage="1" titletext="Click on the adjective in the sentence." display="I spent all the money." answer="all" BloomsTaxonomy="1" use="L,P,T"/>
+  <!--Basic - End-->
+  <!--Intermediate- Begin-->
+  <activity adjectiveGroupId="adjective_2b" qId="1" stage="1" titletext="Identify whether the underlined word is Adjective of Quality or Quantity." displaytext="The castle is an {old} one." display="Quantity, Quality" correctOption="Quality" BloomsTaxonomy="1,2" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2b" qId="2" stage="1" titletext="Identify whether the underlined word is Adjective of Quality or Quantity." displaytext="Is there {enough} space for all of us?" display="Quantity, Quality" correctOption="Quantity" BloomsTaxonomy="1,2" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2b" qId="3" stage="1" titletext="Identify whether the underlined word is Adjective of Quality or Quantity." displaytext="I drank a {little} juice." display="Quantity, Quality" correctOption="Quantity" BloomsTaxonomy="1,2" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2b" qId="4" stage="1" titletext="Identify whether the underlined word is Adjective of Quality or Quantity." displaytext="She has bought a {new} dress. " display="Quantity, Quality" correctOption="Quality" BloomsTaxonomy="1,2" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2b" qId="5" stage="1" titletext="Identify whether the underlined word is Adjective of Quality or Quantity." displaytext="I need {some} honey." display="Quantity, Quality" correctOption="Quantity" BloomsTaxonomy="1,2" use="L,P,T"/>
+  <!--Intermediate- End-->
+  <!--Advanced- Begin-->
+  <!--<activity adjectiveGroupId="adjective_2c" qId="1" stage="1" titletext="Fill in the blank with the correct adjective." displaytext="Can I have _____ money?" display="any, some" correctOption="some" BloomsTaxonomy="1,2,3" use="L,P,T"/>-->
+  <activity adjectiveGroupId="adjective_2c" qId="2" stage="1" titletext="Fill in the blank with the correct adjective." displaytext="Do you have _____ money with you?" display="any, some" correctOption="any" blankposition="4" BloomsTaxonomy="1,2,3" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2c" qId="3" stage="1" titletext="Fill in the blank with the correct adjective." displaytext="I don't have _____." display="any, some" correctOption="any" BloomsTaxonomy="1,2,3" use="L,P,T"/>
+<!--  <activity adjectiveGroupId="adjective_2c" qId="4" stage="1" titletext="Fill in the blank with the correct adjective." displaytext="He did not eat _____ bread." display="any, some" correctOption="any" BloomsTaxonomy="1,2,3" use="L,P,T"/>
+  <activity adjectiveGroupId="adjective_2c" qId="5" stage="1" titletext="Fill in the blank with the correct adjective." displaytext="He added _____ sugar in his coffee." display="any, some" correctOption="some" BloomsTaxonomy="1,2,3" use="L,P,T"/>-->
+  <!--Advanced- End-->
+  <!-- (L1) QUALITY QUANTITY End-->
+  
+</activities>

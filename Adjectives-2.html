@@ -1,0 +1,2928 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- viewport -->
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+
+    <title>FOE-Learner V-4.0 :: Adjectives</title>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="css/customThemeElements.css">
+    <link rel="stylesheet" href="css/simplePagination.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
+    <link rel="stylesheet" type="text/css" href="css/cssTooltip.css" />
+    <script src="js/resources/grammar_adjective.js"></script>
+    <script src="js/resources/grammar_adjective_menustructure.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <script>
+        // Added for chrome
+        $(document).bind('mobileinit', function () {
+            $.mobile.changePage.defaults.changeHash = false;
+            $.mobile.hashListeningEnabled = false;
+            $.mobile.pushStateEnabled = false;
+        });
+    </script>
+
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/jquery-viewstack.js" type="text/javascript"></script>
+    <script src="js/jquery.simplePagination.js"></script>
+    <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+    <script type="text/javascript" src="js/querystring-0.9.0-min.js"></script>
+    <script src="js/master.js"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#toggle4').click(function () {
+                $('.toggle4').slideToggle(500);
+                return false;
+            });
+        });
+
+    </script>
+
+
+    <script language="javascript">
+        var viewStack;
+        var arrQuestionObjects = [];
+        var arrQuestionObjects = [];
+        var arrMenuObjects = [];
+        var arrQuestionObjectsMaster = [];
+        var currentPageNumber = 0;
+        var loadState = "";
+        var currentQuestionObject;
+        var totalScore = 0;
+        var filteredQuestions = 0;
+        var totalFilteredQuestions = 0;
+        var qcounter = 1;
+
+        var arrSelectedWords = [];
+        var radioGroupName = "answerOptions";
+        var correctAnswerCount = 0;
+        var currentStage = 0;
+        /*Timer code*/
+        var f;
+        var mytimersec = [];
+        var mytimermin = [];
+        var myminute = 00;
+        var mysec = 00;
+        var mytimersecGlobal = [];
+        var mytimerminGlobal = [];
+        var myminuteGlobal = 00;
+        var mysecGlobal = 00;
+        var secondCount;
+        var pbi = 1;
+        var controlCounter = 0;
+        var timervalue = [00, 00, 00, 00];
+        var timermin = [00, 00, 00, 00];
+        var timerglobalvalue = [00, 00, 00, 00];
+        var timeglobalrmin = [00, 00, 00, 00];
+        /*Timer end*/
+        var bloomPlaceholders = [6, 5, 4, 3, 2, 1];
+        var flag = [true, true, true, true, true, true];
+        var learn;
+        var videoPath = "video/";
+        var clickms = 100;
+        var lastTouchDown = -1;
+        $(function () {
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+        });
+
+
+        function validateQueryStrings() {
+            var s = 0;
+            if ($.QueryString() == null || $.QueryString() == undefined || $.QueryString().size == 0 || $.QueryString().stg == 'undefined' || $.QueryString().stg == '')
+                s = 0;
+            else if ($.QueryString().size >= 1) {
+                s = $.QueryString().stg;
+                if (isNaN(s)) {
+                    s = 0;
+                }
+                else if (parseInt(s) > 5) {
+                    s = 0;
+                }
+            }
+            else if ($.QueryString().size == 1) {
+                s = $.QueryString().stg;
+            }
+
+            return s;
+        }
+
+
+
+        $(document).ready(function () {
+            //init();
+            /*Timer code*/
+            timer();
+            timerGlobal();
+            /*timer end*/
+            $('body').tooltipster();
+            currentStage = 1;
+            //$(".main-content").tooltipster({
+            //    theme: "tooltipster-alert",
+            //    position: "top",
+            //    touchDevices: true,
+            //    contentAsHTML: true,
+            //    timer: 5000,
+            //    animation: "grow",
+            //    arrow: false,
+            //    content: "Please click on the Adjectives",
+            //    functionAfter: function () {
+            //        $(".main-content").tooltipster("content", "");
+            //        $(".main-content").tooltipster("disable");
+            //    }
+            //});
+
+
+            //$(".main-content").tooltipster("show");
+           
+            $("#hintContainer").tooltipster({
+                theme: "tooltipster-alert",
+                position: "top",
+                touchDevices: true,
+                contentAsHTML: true,
+                timer: 5000,
+                animation: "grow",
+                arrow: false,
+                content: "",
+            });
+
+
+            $("#rightAnswer").hide();
+            $("#rightAnswer_mat").hide();
+            $("#showAnswer").hide();
+            $("#totScore").html(correctAnswerCount);
+            $("#headertext span").html("");
+            $("#questioncounter").show();
+
+            /* To disable Teach button */
+            //var TeachPresence = headerText = $(menuData).find("menuitem").attr("teach");
+            //if (TeachPresence == "no") {
+            //    $("#teachmode").addClass("disableddiv");
+            //    $("#radio-choice-h-2a").css("display", "none");
+            //}
+            var TestPresence = $(menuData).find("menuitem").attr("test");
+            if (TestPresence == "no") {
+                $("#testmode").addClass("disableddiv");
+                $("#radio-choice-h-2d").css("display", "none");
+            }
+            /* To disable Teach button */
+            $(menuData).find("menuitem").each(function () {
+                $(this).find("menuitem").each(function () {
+                    var stageArray = [];
+                    stageArray = $(this).attr("stage").split(",");
+                    if ($(this).is('[stage]')) {
+                        // Initialize a question object
+                        for (var i = 0; i <= stageArray.length; i++) {
+                            if (stageArray[i] == currentStage.toString()) {
+                                // Initialize a menu object
+                                var objMenu = {};
+
+                                // Set property to the menu object
+                                objMenu.id = $(this).attr("adjectiveGroupId");
+                                objMenu.title = $(this).attr("title");
+                                objMenu.enabled = ($(this).attr("excludeFromDemo") == 'false');
+                                objMenu.type = $(this).attr("impType");
+                                objMenu.learn = $(this).attr("learn");
+                                objMenu.teach = $(this).attr("teach");
+                                objMenu.vidSrc = $(this).attr("videoSource");
+                                // Push the menu Object into the menu Object array
+                                arrMenuObjects.push(objMenu);
+                            }
+
+                            else {
+                                $("#stackContainer").empty();
+                                $("#light-pagination").hide();
+
+                                $("#checkanswer").hide();
+                                $("#scoretime").hide();
+                                $(".completeCourseSection").hide();
+                                $(".form-button").hide();
+
+                                $("#DivMainContent").hide();
+                                $("#noContent").show();
+                            }
+                        }
+                    }
+                });
+            });
+            if (arrMenuObjects[0].teach == "no") {
+                $("#teachmode").addClass("disableddiv");
+                $("#radio-choice-h-2a").css("display", "none");
+            }
+            $("#totScore").html(0);
+
+            //To bind left menu bar
+
+            for (m = 0 ; m < arrMenuObjects.length ; m++) {
+
+                var cssClass = arrMenuObjects[m].enabled ? "has-sub" : "has-sub ui-disabled";
+                var tooltipTitle = arrMenuObjects[m].enabled ? "This item is not part of the demo." : "";
+
+                $("#ulMenuItem").append("<li video-src='" + arrMenuObjects[m].vidSrc + "' teach-mode='" + arrMenuObjects[m].teach + "' class='has-sub class" + m + "' data-menu-type='" + arrMenuObjects[m].type + "' data-menu-id='" + arrMenuObjects[m].id + "'><a href='#'><span style='border-color: rgba(0, 0, 0, 0.34902);'>" + arrMenuObjects[m].title + "</span><span class='holder' style='border-color: rgba(0, 0, 0, 0.34902);'></span></a></li>");
+            }
+
+            //To Enable first left menu item on page load
+            $("#ulMenuItem").find('li:first').addClass("active");
+            //Video
+            var videoCount = 0;
+            //Video end
+            getContent(arrMenuObjects[0].id, arrMenuObjects[0].type, arrMenuObjects[0].learn);
+            //To change the content of stack depending on selected item in the left menu bar
+            $("#ulMenuItem li").each(function () {
+                //Video
+                if(videoCount==0){
+                var videosource = $(this).attr("video-src")
+                $("#teachmode").attr("data-video", videosource);
+                videoCount++;
+                }
+                //Video end
+                $("#rightAnswer").hide();
+                $("#showAnswer").hide();
+
+                //arrQuestionObjects = [];
+                var menuItemli = $(this);
+                menuItemli.click(function (e) {
+                    var classNumber = $(this).attr("class");
+                    //Video
+                    var videosource = $(this).attr("video-src")              
+                    $("#teachmode").attr("data-video", videosource);
+                    //Video end
+                    var suf = classNumber.match(/\d+/);
+                    learn = arrMenuObjects[suf].learn;
+                    if (learn == "no") {
+                        $("#learnmode").addClass("disableddiv");
+                        $("#radio-choice-h-2b").css("display", "none");
+                    }
+                    else {
+                        $("#learnmode").removeClass("disableddiv");
+                        $("#radio-choice-h-2b").css("display", "block");
+                    }
+                    if ($(this).attr("teach-mode") == "no") {
+                        $("#teachmode").addClass("disableddiv");
+                        $("#radio-choice-h-2a").css("display", "none");
+                    }
+                    else {
+                        $("#teachmode").removeClass("disableddiv");
+                        $("#radio-choice-h-2a").css("display", "block");
+                    }
+                    $("#totScore").html(0);
+                    $("#rightAnswer").hide();
+                    $("#rightAnswer_mat").hide();
+                    
+                    $("#showAnswer").hide();
+                    /*asif--back button--*/
+                    $("#backtohome").hide();
+                    $("#correctAnswerContainer").css("display", "none");
+                    $("#stackContainer").show();
+                    /*asif--back button--*/
+
+                    var controlCounter = 0;
+                    currentPageNumber = 0;
+                    setDefaultTextInputFocus();
+                    $("#videocontainer").hide();
+                    $("#insidecontainer").show();
+                    $("#checkanswer").css("opacity", "1");
+                    $("#checkanswer").css("pointer-events", "painted");
+                    $("#cmpltactivity").css("opacity", "1");
+                    $("#cmpltactivity").css("pointer-events", "painted");
+                    $("#light-pagination").removeClass("disableddiv");
+                    //$("#checkanswer").hide();
+                    $("#scoretime").removeClass("disableddiv");
+                    $(".completeCourseSection").removeClass("disableddiv");
+                    $(".bloom_pyramid").removeClass("disableddiv");;
+                    $("#sidestages").removeClass("disableddiv");
+                    $("#DivMainContent").css("background-color", "#fff");
+                    $("#DivMainContent").css("text-align", "left");
+                    $("#totScore").removeClass("disableddiv");
+                    var vid = document.getElementById("PlayVideo");
+                    if (vid != null || vid != undefined) {
+                        vid.pause();
+                    }
+
+                    $("#radio-choice-h-2c").attr("checked", true).checkboxradio("refresh");
+                    $("#practicemode").addClass("ui-btn-active ui-radio-on");
+                    $("#practicemode").removeClass("ui-radio-off");
+                    $("#radio-choice-h-2a").attr("checked", false).checkboxradio("refresh");
+                    $("#radio-choice-h-2b").attr("checked", false).checkboxradio("refresh");
+                    $("#radio-choice-h-2d").attr("checked", false).checkboxradio("refresh");
+                    flag = [true, true, true, true, true, true];
+                    for (var t = 0; t < 6; t++) {
+
+                        updateTooltipTheme(t + 1, flag[t], bloomsTaxonomyContentText[t][0]);
+                    }
+                    $("#ulMenuItem li").removeClass("active");
+                    menuItemli.addClass("active");
+                    getContent($(this).attr("data-menu-id"), $(this).attr("data-menu-type"), arrMenuObjects[suf].learn);
+                    $("light-pagination").pagination();
+                });
+            });
+
+            //Change function for radio button
+            $(document).on('change', 'input[type="radio"]', function (event) {
+                $("#rightAnswer").hide();
+                $("#showAnswer").hide();
+                if ($(this).hasClass(radioGroupName)) {
+                    var wordDataValue = $(this).attr("value").replace(/~/, "'").replace(".", "");
+                    if ($(this).is(":checked")) {
+
+                        //Pushing id of selected radio button to currentQuestionObject.checkedOptionId variable
+                        currentQuestionObject.checkedOptionId = $(this).attr("id");
+
+                    }
+                }
+            });
+
+
+            //Change function for checkbox
+            $(document).on('change', 'input[type="checkbox"]', function (event) {
+                if ($("#myViewStack").hasClass("viewstackCTH")) {
+                    $("#rightAnswer").hide();
+                    $("#showAnswer").hide();
+                    if ($(this).hasClass(radioGroupName)) {
+                        var wordDataValue = $(this).attr("value").replace(/~/, "'").replace(".", "").replace(",", "").replace("?", "").replace("#"," ");
+                        if ($(this).is(":checked")) {
+
+                            //pushing selected checkbox value to the array
+                            currentQuestionObject.selectedWords.push(wordDataValue);
+
+                        }
+                        else {
+                            $(this).parent().parent().parent().removeClass();
+                            $(this).parent().parent().parent().addClass("BoxGrammar");
+
+                            //To remove the value from array when unchecked the checked one
+                            var tempArrSelectedWords = $.grep(currentQuestionObject.selectedWords, function (value) {
+                                return value != wordDataValue;
+                            });
+                            currentQuestionObject.selectedWords = tempArrSelectedWords;
+                        }
+                    }
+                }
+                else if ($("#myViewStack").hasClass("viewstackFIB")) {
+
+                    $("#ui-checkbox").css("margin", "10px;")
+                    $("#rightAnswer").hide();
+                    $("#showAnswer").hide();
+                    var checkCounter = 0;
+                    var checkBoxId = $(this).attr("id");
+                    var arrTempCheckbox = $("#stack" + currentPageNumber).find("input[type=checkbox]");
+                    var arrTempInput = $("#stack" + currentPageNumber).find("input[type=text]");
+                    if ($(this).is(":checked")) {
+                        if ($(activeTextInput).attr("data-option-rel").length > 0) {
+                            $(arrTempCheckbox).each(function () {
+                                if ($(activeTextInput).attr("data-option-rel").trim() == $(this).val().trim()) {
+                                    $(this).prop("checked", false);
+                                    $(this).checkboxradio("refresh");
+                                }
+                            });
+                        }
+
+
+                        $(activeTextInput).val($("#" + checkBoxId).attr("value").replace(/~/g, "'"));
+
+                        $(activeTextInput).attr("data-option-rel", $("#" + checkBoxId).attr("value"));
+                        controlCounter++;
+                        setDefaultTextInputFocus();
+
+                    }
+                    else {
+                        $(this).prop("checked", true);
+                        $(this).checkboxradio("refresh");
+                    }
+                    $("#stackContainer label").removeClass("ui-btn-icon-left");
+                }
+            });
+            $(document).on('focusin', 'input[type="text"]', function (event) {
+                activeTextInput = $(this);
+                var tempId = $(this).attr("id");
+                for (var t = 0; t < arrTextControls.length; t++) {
+                    if ($(arrTextControls[t]).attr("id") == tempId) {
+                        controlCounter = t;
+                    }
+                }
+                $(".keyin").keyup(function (event) {
+                    if (event.keyCode == 13) {
+                        $("#checkanswer").click();
+                    }
+                });
+            });
+
+            ////For FIB input text box focus
+            //$(document).on('focusin', 'input[type="text"]', function (event) {
+            //    $("#rightAnswer").hide();
+            //    $("#showAnswer").hide();
+            //    activeTextInput = $(this);
+            //    var tempId = $(this).attr("id");
+            //    for (var t = 0; t < arrTextControls.length; t++) {
+            //        if ($(arrTextControls[t]).attr("id") == tempId) {
+            //            controlCounter = t;
+            //        }
+            //    }
+            //});
+
+            $("#backtohome").on("vclick", function (event) {
+                $("#stackContainer").show();
+                $("#correctAnswerContainer").hide();
+                $("#light-pagination").show();
+                $("#backtohome").hide();
+                $("#checkanswer").show();
+            });
+
+            $("#checkanswer").on("vclick", function (event) {
+                /*Timer code*/
+                mytimermin[pbi - 1] = myminute;
+                mytimersec[pbi - 1] = mysec;
+                $("#mytimerholder").html("LocalValue[" + pbi + "]=" + mytimermin[pbi - 1] + ":" + mytimersec[pbi - 1]);
+                /*Timer end*/
+                $("#resultcontainer").show();
+                var isCorrect = false;
+
+                //Check function for MCQ type of implementation
+                if ($("#myViewStack").hasClass("viewstackMCQ")) {
+               
+                    currentQuestionObject.isChecked = true;
+                    var arrOptionsMCQ = $("#stack" + currentPageNumber).find("input[type=radio]");
+
+                    for (var k = 0; k < arrOptionsMCQ.length; k++) {
+                        var rad_id = $(arrOptionsMCQ[k]).attr("id");
+                        $("#b" + rad_id).removeClass();
+                        $("#b" + rad_id).addClass("regularBoxradio");
+                        if ($("#" + rad_id).attr("id") == currentQuestionObject.checkedOptionId) {
+                            
+                            if (($("#" + rad_id).attr("value").replace(".", "").replace("$", ",").replace("$", ",").trim().toLowerCase() == currentQuestionObject.correctoption.replace(".", "").trim().toLowerCase())) {
+                                $("#b" + rad_id).addClass("CorrectBoxradio");
+                                currentQuestionObject.isCorrect = true;
+                                $("#rightAnswer").hide();
+                            }
+                            else {
+                                $("#b" + rad_id).addClass("wrongBoxradio");
+                                currentQuestionObject.isCorrect = false;
+
+                                if ($('#showAnswer').is(":visible")) {
+                                    $("#rightAnswer").hide();
+                                }
+                                else {
+                                    if ($("#testmode").hasClass("ui-radio-on")) {
+                                        $("#rightAnswer").hide();
+                                    }
+                                    else {
+                                        $("#rightAnswer").show();
+                                        $("#rightAnswer_mat").hide();
+
+                                    }
+
+                                }
+                            } //break;
+                        }
+                    }
+                    $("#rightAnswer").click(function (e) {
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").show();
+                        $("#dispalyAnswer").html("");
+                        $("#dispalyAnswer").html("Correct Answer : " + currentQuestionObject.correctoption.replace(/,/g, ', ').replace(/#/g, ' '));
+                    });
+                }
+                else if ($("#myViewStack").hasClass("viewstackTyp")) {
+                    var tempArrOptions = $("#stack" + currentPageNumber).find("input[type = text]");
+                    var answerCorrect = 0;
+                    currentQuestionObject.inputValues = [];
+                    for (var k = 0; k < tempArrOptions.length; k++) {
+                        if (tempArrOptions[k].type == "text") {
+                            currentQuestionObject.inputValues.push($(tempArrOptions[k]).val());
+                            var lhs = $(tempArrOptions[k]).val().toLowerCase();
+
+                            var rhs = $(tempArrOptions[k]).attr("correct-value").toLowerCase().replace("~", "'");
+                            if (lhs.trim() == rhs.trim()) {
+                                if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxFib")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxFib");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxFib");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                }
+                            }
+                            else {
+                                if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxFib")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxFib");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxFib")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxFib");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxFib");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                }
+                            }
+                        }
+                    }
+
+                    var correctFlag = false;
+                    for (var k = 0; k < tempArrOptions.length; k++) {
+                        if (tempArrOptions[k].type == "text") {
+                            if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxFib") || $(tempArrOptions[k]).parent().parent().hasClass("correctBoxLarge") || $(tempArrOptions[k]).parent().parent().hasClass("correctBoxSmall")) {
+                                correctFlag = true;
+                            }
+                            else {
+                                correctFlag = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (correctFlag) {
+                        currentQuestionObject.isCorrect = true;
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").hide();
+                        answerCorrect++;
+                    }
+                    else {
+                        currentQuestionObject.isCorrect = false;
+                        if ($("#showAnswer").is(":visible")) {
+                            $("#rightAnswer").hide();
+                        }
+                        else {
+                            if ($("#testmode").hasClass("ui-radio-on")) {
+                                $("#rightAnswer").hide();
+                                $("#rightAnswer_mat").hide();
+                            }
+                            else {
+                                $("#rightAnswer").show();
+                                $("#rightAnswer_mat").hide();
+                            }
+                        }
+                    }
+
+                    var correctAnswerCount = 0;
+                    for (x = 0 ; x < arrQuestionObjects.length; x++) {
+                        if (arrQuestionObjects[x].isCorrect == true) {
+                            correctAnswerCount++;
+                        }
+                    }
+                    $("#totScore").html(correctAnswerCount);
+                    currentQuestionObject.isChecked = true;
+                    $("#rightAnswer").click(function (e) {
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").show();
+                        $("#dispalyAnswer").html("");
+                        $("#dispalyAnswer").html("Correct Answer : " + currentQuestionObject.correctoption.replace(/,/g, ', ').replace(/#/g, ' '));
+                    });
+                }
+                    //end of MCQ check function
+
+                    //Check function for cts implementation (click to select)
+                else if ($("#myViewStack").hasClass("viewstackCTH")) {
+                   var y=0;
+                    $("#stack" + currentPageNumber).find("input[type=checkbox]").each(function () {
+
+                        if ($(this).is(":checked")) {
+                            y++;
+                        }
+                        var correctOptions = currentQuestionObject.correctoption.split(",");
+
+                        if ($(this).is(":checked")) {
+
+                            if (correctOptions.indexOf($(this).attr("value").replace(/~/g, '\'').replace(".", "").replace(",", "").replace("#"," ").trim()) == -1) {
+
+                                $(this).parent().parent().parent().removeClass();
+                                $(this).parent().parent().parent().addClass("wrongBox");
+                            }
+                            else {
+
+                                $(this).parent().parent().parent().removeClass();
+                                $(this).parent().parent().parent().addClass("correctBox");
+
+                            }
+                        }
+                        else {
+                            $(this).parent().parent().parent().removeClass();
+                            $(this).parent().parent().parent().addClass("BoxGrammar");
+                        }
+
+                    });
+
+                    currentQuestionObject.isChecked = true;
+                    var correctAnswerCount = 0;
+                    for (var q = 0; q < arrQuestionObjects.length; q++) {
+                        if (currentPageNumber == q) {
+                            currentQuestionObject = arrQuestionObjects[q];
+                            var Arrcorrectoption = currentQuestionObject.correctoption.split(",");
+                            var Arrayofwords = Arrcorrectoption;
+                            var Arrayofselectedwordswords = currentQuestionObject.selectedWords;
+
+                            if (Arrayofwords.length == Arrayofselectedwordswords.length) {
+                                $("#hintContainer").tooltipster("hide");
+
+                                if (($(Arrayofwords).not(Arrayofselectedwordswords).length == 0 && $(Arrayofselectedwordswords).not(Arrayofwords).length == 0)) {
+                                    currentQuestionObject.isCorrect = true;
+                                    correctAnswerCount++;
+                                    $("#rightAnswer").hide();
+                                    $("#showAnswer").hide();
+                                    break;
+                                }
+
+                                else {
+                                    currentQuestionObject.isCorrect = false;
+                                    if ($('#showAnswer').is(":visible")) {
+                                        $("#rightAnswer").hide();
+                                        $("#rightAnswer_mat").hide();
+                                    }
+                                    else {
+                                        if ($("#testmode").hasClass("ui-radio-on")) {
+                                            $("#rightAnswer").hide();
+                                            $("#rightAnswer_mat").hide();
+                                        }
+                                        else {
+                                            $("#rightAnswer").show();
+                                            $("#rightAnswer_mat").hide();
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            else {
+
+                                currentQuestionObject.isCorrect = false;
+                                if ($('#showAnswer').is(":visible")) {
+                                    $("#rightAnswer").hide();
+                                }
+                                else {
+                                    if ($("#testmode").hasClass("ui-radio-on")) {
+                                        $("#rightAnswer").hide();
+                                        $("#rightAnswer_mat").hide();
+                                    }
+                                    else {
+                                        $("#rightAnswer").show();
+                                        $("#rightAnswer_mat").hide();
+                                    }
+                                }
+
+                                if (currentQuestionObject.correctoption.split(",").length == 1) {
+
+                                    $("#hintContainer").tooltipster("content", "There is only&nbsp;" + Arrayofwords.length + "&nbsp; Adjective in the sentence.");
+                                    $("#hintContainer").tooltipster("show");
+                                }
+                                else {
+                                    $("#hintContainer").tooltipster("content", "There are&nbsp;" + Arrayofwords.length + "&nbsp;Adjectives in the sentence.");
+                                    $("#hintContainer").tooltipster("show");
+                                }
+                            }
+                        }
+                    }
+                  
+                    if (y == 0) {
+                        $("#hintContainer").tooltipster("content", "Please select an answer/option");
+                        $("#hintContainer").tooltipster("show");
+                    }
+                    $("#rightAnswer").click(function (e) {
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").show();
+                        $("#dispalyAnswer").html("");
+                        $("#dispalyAnswer").html("Correct Answer : " + currentQuestionObject.correctoption.replace(/,/g, ', ').replace(/#/g, ' '));
+                    });
+
+                }
+                    //end of cts check function
+
+                    // FIB check function start
+                else if ($("#myViewStack").hasClass("viewstackFIB")) {
+                    var tempArrOptions = $("#stack" + currentPageNumber).find("input[type = text]");
+                    var answerCorrect = 0;
+                    currentQuestionObject.inputValues = [];
+                    for (var k = 0; k < tempArrOptions.length; k++) {
+                        if (tempArrOptions[k].type == "text") {
+                            currentQuestionObject.inputValues.push($(tempArrOptions[k]).val());
+                            var lhs = $(tempArrOptions[k]).val().replace(".", "");
+                            var rhs = $(tempArrOptions[k]).attr("data-value").replace(/~/g, "'").replace(/#/g, " ").replace(".", "");
+                            if (lhs.trim() == rhs.trim()) {
+                                if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("correctBoxLarge");
+                                }
+                                answerCorrect++;
+                                currentQuestionObject.isCorrect = true;
+                                $("#rightAnswer").hide();
+                            }
+                            else {
+                                if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("regularBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("regularBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("wrongBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("wrongBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxSmall")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxSmall");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxSmall");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBox")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBox");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBox");
+                                } else if ($(tempArrOptions[k]).parent().parent().hasClass("correctBoxLarge")) {
+                                    $(tempArrOptions[k]).parent().parent().removeClass("correctBoxLarge");
+                                    $(tempArrOptions[k]).parent().parent().addClass("wrongBoxLarge");
+                                }
+                                currentQuestionObject.isCorrect = false;
+                                if ($('#showAnswer').is(":visible")) {
+                                    $("#rightAnswer").hide();
+                                }
+                                else {
+                                    $("#rightAnswer").show();
+                                }
+                            }
+                        }
+                    }
+
+                    var correctAnswerCount = 0;
+                    for (x = 0 ; x < arrQuestionObjects.length; x++) {
+                        if (arrQuestionObjects[x].isCorrect == true) {
+                            correctAnswerCount++;
+                        }
+                    }
+                    $("#totScore").html(correctAnswerCount);
+                    currentQuestionObject.isChecked = true;
+                    $("#rightAnswer").click(function (e) {
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").show();
+                        $("#dispalyAnswer").html("Correct Answer : " + currentQuestionObject.correctAnswer.replace(/#/g, " "));
+                    });
+                }
+
+                    // FIB check function start
+
+                else if ($("#myViewStack").hasClass("viewstackDRP")) {
+                    var w = currentQuestionObject.correctoption.split("#");
+                    var p = 0;
+                    $("#sortableWords" + currentPageNumber + " > div > div > span ").each(function () {
+                        if (w[p].trim() == $(this).text().trim()) {
+                            if ($(this).parent().parent().hasClass("regularBoxSmall")) {
+                                $(this).parent().parent().removeClass("regularBoxSmall");
+                                $(this).parent().parent().addClass("correctBoxSmall");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxSmall")) {
+                                $(this).parent().parent().removeClass("wrongBoxSmall");
+                                $(this).parent().parent().addClass("correctBoxSmall");
+                            }
+                            else if ($(this).parent().parent().hasClass("regularBox")) {
+                                $(this).parent().parent().removeClass("regularBox");
+                                $(this).parent().parent().addClass("correctBoxFib");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxFib")) {
+                                $(this).parent().parent().removeClass("wrongBoxFib");
+                                $(this).parent().parent().addClass("correctBoxFib");
+                            }
+                            else if ($(this).parent().parent().hasClass("regularBoxLarge")) {
+                                $(this).parent().parent().removeClass("regularBoxLarge");
+                                $(this).parent().parent().addClass("correctBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxLarge")) {
+                                $(this).parent().parent().removeClass("wrongBoxLarge");
+                                $(this).parent().parent().addClass("correctBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxLarge")) {
+                                $(this).parent().parent().removeClass("correctBoxLarge");
+                                $(this).parent().parent().addClass("correctBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxFib")) {
+                                $(this).parent().parent().removeClass("correctBoxFib");
+                                $(this).parent().parent().addClass("correctBoxFib");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxSmall")) {
+                                $(this).parent().parent().removeClass("correctBoxSmall");
+                                $(this).parent().parent().addClass("correctBoxSmall");
+                            }
+
+                        }
+                        else {
+                            if ($(this).parent().parent().hasClass("regularBoxSmall")) {
+                                $(this).parent().parent().removeClass("regularBoxSmall");
+                                $(this).parent().parent().addClass("wrongBoxSmall");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxSmall")) {
+                                $(this).parent().parent().removeClass("correctBoxSmall");
+                                $(this).parent().parent().addClass("wrongBoxSmall");
+                            }
+                            else if ($(this).parent().parent().hasClass("regularBox")) {
+                                $(this).parent().parent().removeClass("regularBox");
+                                $(this).parent().parent().addClass("wrongBoxFib");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxFib")) {
+                                $(this).parent().parent().removeClass("wrongBoxFib");
+                                $(this).parent().parent().addClass("wrongBoxFib");
+                            }
+                            else if ($(this).parent().parent().hasClass("regularBoxLarge")) {
+                                $(this).parent().parent().removeClass("regularBoxLarge");
+                                $(this).parent().parent().addClass("wrongBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxLarge")) {
+                                $(this).parent().parent().removeClass("wrongBoxLarge");
+                                $(this).parent().parent().addClass("wrongBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("wrongBoxSmall")) {
+                                $(this).parent().parent().removeClass("wrongBoxSmall");
+                                $(this).parent().parent().addClass("wrongBoxSmall");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxLarge")) {
+                                $(this).parent().parent().removeClass("correctBoxLarge");
+                                $(this).parent().parent().addClass("wrongBoxLarge");
+                            }
+                            else if ($(this).parent().parent().hasClass("correctBoxFib")) {
+                                $(this).parent().parent().removeClass("correctBoxFib");
+                                $(this).parent().parent().addClass("wrongBoxFib");
+                            }
+
+                        }
+                        p++;
+                    });
+
+                    var correctFlag = false;
+                    $("#sortableWords" + currentPageNumber + " > div").each(function () {
+                        if ($(this).hasClass("correctBoxFib") || $(this).hasClass("correctBoxLarge") || $(this).hasClass("correctBoxSmall")) {
+                            correctFlag = true;
+                        }
+                        else {
+                            correctFlag = false;
+                            return false;
+                        }
+                    });
+
+                    if (correctFlag) {
+                        currentQuestionObject.isCorrect = true;
+                        $("#rightAnswer").hide();
+                    }
+                    else {
+                        currentQuestionObject.isCorrect = false;
+                        if ($('#showAnswer').is(":visible")) {
+                            $("#rightAnswer").hide();
+                        }
+                        else {
+                            if ($("#testmode").hasClass("ui-radio-on")) {
+                                $("#rightAnswer").hide();
+                            }
+                            else {
+                                $("#rightAnswer").show();
+                                $("#rightAnswer_mat").hide();
+                            }
+
+                        }
+                    }
+
+                    var correctAnswerCount = 0;
+                    for (x = 0 ; x < arrQuestionObjects.length; x++) {
+                        if (arrQuestionObjects[x].isCorrect == true) {
+                            correctAnswerCount++;
+                        }
+                    }
+                    $("#totScore").html(correctAnswerCount);
+                    $("#rightAnswer").click(function (e) {
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").show();
+                        $("#dispalyAnswer").html("");
+                        $("#dispalyAnswer").html("Correct Answer : " + currentQuestionObject.correctoption.replace(/,/g, ', ').replace(/#/g, ' '));
+                    });
+                }
+
+                else {
+                    // alert("no data")
+                    var tempArrPremise = $("#stack" + currentPageNumber).find(".sortablepremise");
+                    var tempArrResponse = $("#stack" + currentPageNumber).find(".sortableresponse");
+                    var answerCorrect = 0;
+                    for (var k = 0; k < tempArrPremise.length; k++) {
+                        var answered = $(tempArrResponse[k]).text();
+                        var original = $(tempArrPremise[k]).attr("data-menu-value");
+                        if (answered == original) {
+                            if ($(tempArrResponse[k]).hasClass("response")) {
+                                $(tempArrResponse[k]).removeClass("response");
+                                $(tempArrResponse[k]).addClass("responseCorrect");
+                            } else if ($(tempArrResponse[k]).hasClass("responseWrong")) {
+                                $(tempArrResponse[k]).removeClass("responseWrong");
+                                $(tempArrResponse[k]).addClass("responseCorrect");
+                            }
+                            //answerCorrect++;
+                            // currentQuestionObject.isCorrect = true;
+                            //$("#rightAnswer").hide();
+                        }
+                        else {
+                            if ($(tempArrResponse[k]).hasClass("response")) {
+                                $(tempArrResponse[k]).removeClass("response");
+                                $(tempArrResponse[k]).addClass("responseWrong");
+                            } else if ($(tempArrResponse[k]).hasClass("responseCorrect")) {
+                                $(tempArrResponse[k]).removeClass("responseCorrect");
+                                $(tempArrResponse[k]).addClass("responseWrong");
+                            }
+                            // currentQuestionObject.isCorrect = false;
+                            // if ($('#showAnswer').is(":visible")) {
+                            //     $("#rightAnswer").hide();
+                            // }
+                            // else {
+                            //     $("#rightAnswer").show();
+                            // }
+                        }
+                    }
+
+
+
+                    var correctFlag = false;
+                    for (var k = 0; k < tempArrPremise.length; k++) {
+                        if ($(tempArrResponse[k]).hasClass("responseCorrect")) {
+                            correctFlag = true;
+                        }
+                        else {
+                            correctFlag = false;
+                            break;
+                        }
+                    }
+
+
+
+                    if (correctFlag) {
+                        currentQuestionObject.isCorrect = true;
+                        $("#rightAnswer").hide();
+                        $("#rightAnswer_mat").hide();
+                        answerCorrect++;
+                    }
+                    else {
+                        currentQuestionObject.isCorrect = false;
+                        if ($("#showAnswer").is(":visible")) {
+                            $("#rightAnswer").hide();
+                            $("#rightAnswer_mat").hide();
+                        }
+                        else {
+                            if ($("#testmode").hasClass("ui-radio-on")) {
+                                $("#rightAnswer").hide();
+                                $("#rightAnswer_mat").hide();
+                            }
+                            else {
+                                $("#rightAnswer").hide();
+                                $("#rightAnswer_mat").show();
+                            }
+
+                        }
+                    }
+
+                    var correctAnswerCount = 0;
+
+                    for (x = 0 ; x < arrQuestionObjects.length; x++) {
+                        if (arrQuestionObjects[x].isCorrect == true) {
+                            correctAnswerCount++;
+                        }
+                    }
+                    $("#totScore").html(correctAnswerCount);
+                    currentQuestionObject.isChecked = true;
+                }
+
+
+                //To show Score count
+                correctAnswerCount = 0;
+                for (k = 0 ; k < arrQuestionObjects.length; k++) {
+                    if (arrQuestionObjects[k].isCorrect == true) {
+                        correctAnswerCount++;
+
+                    }
+                }
+
+                $("#totScore").html(correctAnswerCount);
+
+
+            });
+
+            //To show final score
+            //For diffrent modes start
+            $("#teachmode").click(function () {
+                //Video
+                var sourceFile = videoPath + $(this).attr("data-video");              
+                $("#PlayVideo").attr("src", sourceFile);
+                //Video end
+                $("#insidecontainer").hide();
+                var vid = document.getElementById("PlayVideo");
+                
+                    if (vid != null || vid != undefined) {
+                        vid.currentTime = 0;
+               
+                }
+                $("#videocontainer").show();
+                //$("#noContent").hide();
+                $("#light-pagination").addClass("disableddiv");
+                //$("#checkanswer").hide();
+                $("#scoretime").addClass("disableddiv");
+                $(".completeCourseSection").addClass("disableddiv");
+                $(".bloom_pyramid").addClass("disableddiv");;
+                $("#sidestages").addClass("disableddiv");
+                $("#DivMainContent").css("text-align", "center");
+                $("#DivMainContent").css("background-color", "#FEFDD1");
+                
+                //$(".col-middle").addClass("videocontainer");
+                //$(".page-row").css("margin-bottom", "20px");
+                //$(".headerclass").show();
+                //$("#videocontainer").css("background-color", "#d5dee7");
+            })
+            $("#practicemode").click(function () {
+                $("#totScore").html(0);
+                $("#videocontainer").hide();
+                $("#insidecontainer").show();
+                $("#light-pagination").removeClass("disableddiv");
+                //$("#checkanswer").hide();
+                $("#scoretime").removeClass("disableddiv");
+                $(".completeCourseSection").removeClass("disableddiv");
+                $(".bloom_pyramid").removeClass("disableddiv");;
+                $("#sidestages").removeClass("disableddiv");
+                $("#DivMainContent").css("background-color", "#fff");
+                $("#DivMainContent").css("text-align", "left");
+                $("#totScore").removeClass("disableddiv");
+                $("#checkanswer").css("opacity", "1");
+                $("#checkanswer").css("pointer-events", "painted");
+                $("#cmpltactivity").css("opacity", "1");
+                $("#cmpltactivity").css("pointer-events", "painted");
+                $("#correctAnswerContainer").css("display", "none");
+                $("#stackContainer").css("display", "block");
+                $("#backtohome").css("display", "none");
+                $("#checkanswer").css("display", "block");
+
+                for (k = 0 ; k < arrQuestionObjects.length; k++) {
+                    arrQuestionObjects[k].isCorrect = false;
+                }
+                if ($("#myViewStack").hasClass("viewstackMCQ")) {
+                  
+                    currentQuestionObject.checkedOptionId = "";
+                    buildContentUICtsMCQ(0, "P", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackCTH")) {
+                    buildContentUICts(0, "P", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackFIB")) {
+                    buildContentUIFib(0, "P", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackDRP")) {
+                    buildContentUIDrp(0, "P", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackMAT")) {
+                    buildContentUImat(0, "P", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackTyp")) {
+                    buildContentUITyp(0, "P", learn);
+                }
+
+                var vid = document.getElementById("PlayVideo");
+                if (vid != null || vid != undefined) {
+                    vid.pause();
+                }
+                currentQuestionObject.selectedWords = [];
+
+            })
+            $("#testmode").click(function () {
+
+                $("#totScore").html(0);
+                $("#videocontainer").hide();
+                $("#insidecontainer").show();
+                $("#light-pagination").removeClass("disableddiv");
+                //$("#checkanswer").hide();
+                $("#scoretime").removeClass("disableddiv");
+                $(".completeCourseSection").removeClass("disableddiv");
+                $(".bloom_pyramid").removeClass("disableddiv");;
+                $("#sidestages").removeClass("disableddiv");
+                $("#DivMainContent").css("background-color", "#fff");
+                $("#DivMainContent").css("text-align", "left");
+                $("#totScore").removeClass("disableddiv");
+                $("#checkanswer").css("opacity", "1");
+                $("#checkanswer").css("pointer-events", "painted");
+                $("#cmpltactivity").css("opacity", "1");
+                $("#cmpltactivity").css("pointer-events", "painted");
+                $("#correctAnswerContainer").css("display", "none");
+                $("#stackContainer").css("display", "block");
+                $("#backtohome").css("display", "none");
+                $("#checkanswer").css("display", "block");
+                $("#rightAnswer_mat").hide();
+              
+                for (k = 0 ; k < arrQuestionObjects.length; k++) {
+                    arrQuestionObjects[k].isCorrect = false;
+                }
+                if ($("#myViewStack").hasClass("viewstackMCQ")) {
+                    currentQuestionObject.checkedOptionId = "";
+                    buildContentUICtsMCQ(0, "T", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackCTH")) {
+                    buildContentUICts(0, "T", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackFIB")) {
+                    buildContentUIFib(0, "T", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackDRP")) {
+                    buildContentUIDrp(0, "T", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackMAT")) {
+                    buildContentUImat(0, "T", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackTyp")) {
+                    buildContentUITyp(0, "T", learn);
+                }
+                var vid = document.getElementById("PlayVideo");
+                if (vid != null || vid != undefined) {
+                    vid.pause();
+                }
+                currentQuestionObject.selectedWords = [];
+            })
+            $("#learnmode").click(function () {
+
+                $("#totScore").html(0);
+                $("#videocontainer").hide();
+                $("#insidecontainer").show();
+                $("#light-pagination").removeClass("disableddiv");
+                //$("#checkanswer").hide();
+                $("#scoretime").removeClass("disableddiv");
+                $(".completeCourseSection").removeClass("disableddiv");
+                $(".bloom_pyramid").removeClass("disableddiv");;
+                $("#sidestages").removeClass("disableddiv");
+                $("#DivMainContent").css("background-color", "#fff");
+                $("#DivMainContent").css("text-align", "left");
+                $("#totScore").addClass("disableddiv");
+                $("#checkanswer").css("opacity", "0.2");
+                $("#checkanswer").css("pointer-events", "none");
+                $("#cmpltactivity").css("opacity", "0.2");
+                $("#cmpltactivity").css("pointer-events", "none");
+                $("#correctAnswerContainer").css("display", "none");
+                $("#stackContainer").css("display", "block");
+                $("#backtohome").css("display", "none");
+                $("#checkanswer").css("display", "block");
+                $("#rightAnswer_mat").hide();
+
+                for (k = 0 ; k < arrQuestionObjects.length; k++) {
+                    arrQuestionObjects[k].isCorrect = false;
+                }
+
+                if ($("#myViewStack").hasClass("viewstackMCQ")) {
+                    currentQuestionObject.checkedOptionId = "";
+                    buildContentUICtsMCQ(0, "L", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackCTH")) {
+                    buildContentUICts(0, "L", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackFIB")) {
+                    buildContentUIFib(0, "L", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackDRP")) {
+                    buildContentUIDrp(0, "L", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackMAT")) {
+                    buildContentUImat(0, "L", learn);
+                }
+                else if ($("#myViewStack").hasClass("viewstackTyp")) {
+                    buildContentUITyp(0, "L", learn);
+                }
+                var vid = document.getElementById("PlayVideo");
+                if (vid != null || vid != undefined) {
+                    vid.pause();
+                }
+                currentQuestionObject.selectedWords = [];
+
+            })
+            //For diffrent modes end
+            $("#finish").on("vclick", function (event) {
+                correctAnswerCount = 0;
+                for (k = 0 ; k < arrQuestionObjects.length; k++) {
+                    if (arrQuestionObjects[k].isCorrect == true)
+                        correctAnswerCount++;
+                }
+                $("#scorecontainer h3").html("You scored " + correctAnswerCount + " / " + arrQuestionObjects.length);
+                $("#popupDialog").popup('open');
+            });
+
+            $("#rightAnswer_mat").click(function (e) {
+                $("#rightAnswer").hide();
+                $("#rightAnswer_mat").hide();
+                $("#showAnswer").show();
+                $("#stackContainer").hide();
+                buildCorrectAnwer(currentPageNumber);
+                $("#correctAnswerContainer").show();
+            });
+
+            $("#showAnswer").click(function (e) {
+                $("#rightAnswer").show();
+                $("#rightAnswer_mat").hide();
+                $("#showAnswer").hide();
+            });
+
+            $(".stage-class").tooltip({
+                position: {
+                    my: "center bottom-20",
+                    at: "center top",
+                    using: function (position, feedback) {
+                        $(this).css(position);
+                        $("<div>")
+                            .addClass("arrow")
+                            .addClass(feedback.vertical)
+                            .addClass(feedback.horizontal)
+                            .appendTo(this);
+                    }
+                }
+            });
+        });
+
+        // document ready end
+
+        function getContent(menuItemID, type, learn) {
+            $("#stackContainer").empty();
+
+            //To get content for cts type of implementation
+            if (type == "cts") {
+
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+                $(contentData).find("activity").each(function () {
+                    if ($(this).attr("answer")) {
+
+                        if ($(this).attr("adjectiveGroupId") == menuItemID) {
+                            var objQuestion = {};
+
+                            // Initialize a question object
+                            var objQuestion = {};
+
+                            // Set property to the question object
+                            objQuestion.titleText = $(this).attr("titletext");
+                            objQuestion.display = $(this).attr("display");
+                            objQuestion.useIn = $(this).attr("Use");
+                            objQuestion.correctoption = $(this).attr("answer").replace(/, /g, ',');
+                            if ($(this).attr("displaytext")) {
+                                objQuestion.displayText = $(this).attr("displaytext");
+                            }
+                            else {
+                                objQuestion.displayText = "";
+                            }
+                            objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                            objQuestion.isChecked = false;
+                            objQuestion.isCorrect = false;
+                            objQuestion.selectedWords = [];
+                            if ($(this).attr("BloomsTaxonomy")) {
+                                objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+                            }
+                            else {
+                                objQuestion.bloomsTaxonomy = "";
+                            }
+
+                            // Push the Question Object into the Question Object array
+                            arrQuestionObjectsMaster.push(objQuestion);
+
+                            //return true;
+                        }
+
+                        else {
+                            $("#stackContainer").empty();
+                            $("#light-pagination").hide();
+
+                            $("#checkanswer").hide();
+                            $("#scoretime").hide();
+                            $(".completeCourseSection").hide();
+                            $(".form-button").hide();
+
+                            $("#DivMainContent").hide();
+                            $("#noContent").show();
+
+                        }
+
+                    }
+                });
+
+                buildContentUICts(0, "P", learn);
+            }
+
+                //To get content for mcq type of implementation
+            else if (type == "mcq") {
+
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+                $(contentData).find("activity").each(function () {
+
+                    if ($(this).attr("correctoption")) {
+
+                        if ($(this).attr("adjectiveGroupId") == menuItemID) {
+
+                            // Initialize a question object
+                            var objQuestion = {};
+
+                            // Set property to the question object
+                            objQuestion.titleText = $(this).attr("titletext");
+                            //objQuestion.displayText = $(this).attr("displaytext");
+                            objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                            objQuestion.options = $(this).attr("display");
+                            objQuestion.correctoption = $(this).attr("correctoption");
+                            objQuestion.useIn = $(this).attr("use");
+                            objQuestion.isChecked = false;
+                            objQuestion.isCorrect = false;
+                            if ($(this).attr("displaytext")) {
+                                objQuestion.displayText = $(this).attr("displaytext");
+                            }
+                            else {
+                                objQuestion.displayText = "";
+                            }
+                            if ($(this).attr("BloomsTaxonomy")) {
+                                objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+                            }
+                            else {
+                                objQuestion.bloomsTaxonomy = "";
+                            }
+
+                            // Push the Question Object into the Question Object array
+                            arrQuestionObjectsMaster.push(objQuestion);
+                        }
+
+                        else {
+                            $("#stackContainer").empty();
+                            $("#light-pagination").hide();
+
+                            $("#checkanswer").hide();
+                            $("#scoretime").hide();
+                            $(".completeCourseSection").hide();
+                            $(".form-button").hide();
+
+                            $("#DivMainContent").hide();
+                            $("#noContent").show();
+                        }
+                    }
+
+                });
+                buildContentUICtsMCQ(0, "P", learn);
+            }
+            else if (type == "typ") {
+
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+                $(contentData).find("activity").each(function () {
+                    if ($(this).attr("blankposition")) {
+                        if ($(this).attr("adjectiveGroupId") == menuItemID) {
+                            var objQuestion = {};
+                            // Initialize a question object
+                            var objQuestion = {};
+                            // Set property to the question object
+                            objQuestion.titleText = $(this).attr("titletext");
+                            objQuestion.displayText = $(this).attr("displaytext");
+                            objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                            objQuestion.wordPositions = $(this).attr("blankposition");
+                            objQuestion.correctoption = $(this).attr("answer");
+                            objQuestion.useIn = $(this).attr("use");
+                            objQuestion.isChecked = false;
+                            objQuestion.isCorrect = false;
+                            if ($(this).attr("BloomsTaxonomy")) {
+                                objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+                            }
+                            else {
+                                objQuestion.bloomsTaxonomy = "";
+                            }
+                            // Push the Question Object into the Question Object array
+                            arrQuestionObjectsMaster.push(objQuestion);
+                        }
+                        else {
+                            $("#stackContainer").empty();
+                            $("#light-pagination").hide();
+
+                            $("#checkanswer").hide();
+                            $("#scoretime").hide();
+                            $(".completeCourseSection").hide();
+                            $(".form-button").hide();
+
+                            $("#DivMainContent").hide();
+                            $("#noContent").show();
+                        }
+                    }
+                });
+                buildContentUITyp(0, "P", learn);
+            }
+            else if (type == "drp") {
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+
+                $(contentData).find("activity").each(function () {
+                    if ($(this).attr("correctorder")) {
+                        if ($(this).attr("adjectiveGroupId") == menuItemID) {
+                            // Initialize a question object
+                            var objQuestion = {};
+                            // Set property to the question object
+                            //objQuestion.displayText = $(this).attr("displaytext");
+                            objQuestion.titleText = $(this).attr("titletext");
+                            objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                            objQuestion.correctoption = $(this).attr("correctorder");
+                            objQuestion.useIn = $(this).attr("use");
+                            objQuestion.isChecked = false;
+                            objQuestion.isCorrect = false;
+
+                            if ($(this).attr("BloomsTaxonomy")) {
+                                objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+                            }
+                            else {
+                                objQuestion.bloomsTaxonomy = "";
+                            }
+
+                            // Push the Question Object into the Question Object array
+                            arrQuestionObjectsMaster.push(objQuestion);
+                        }
+
+                        else {
+                            $("#stackContainer").empty();
+                            $("#light-pagination").hide();
+
+                            $("#checkanswer").hide();
+                            $("#scoretime").hide();
+                            $(".completeCourseSection").hide();
+                            $(".form-button").hide();
+
+                            $("#DivMainContent").hide();
+                            $("#noContent").show();
+                        }
+                    }
+
+                });
+                buildContentUIDrp(0, "P", learn);
+            }
+
+            else if (type == "mat") {
+
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+                $(contentData).find("activity").each(function () {
+
+                    //  if ($(this).attr("correctOption")) {
+
+                    if ($(this).attr("adjectiveGroupId") == menuItemID) {
+
+                        var objQuestion = {};
+
+                        // Set property to the question object
+                        objQuestion.id = $(this).attr("qId");
+                        objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                        if ($(this).is('titletext')) {
+                            objQuestion.titleText = $(this).attr("titletext");
+                        }
+                        else {
+                            objQuestion.titleText = "";
+                        }
+                        objQuestion.useIn = $(this).attr("use");
+                        if ($(this).is('[BloomsTaxonomy]')) {
+                            objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+
+                        }
+                        objQuestion.isChecked = false;
+                        objQuestion.isCorrect = false;
+                        objQuestion.optionOrder = [];
+                        objQuestion.checkedOptionId = "";
+
+                        // Initialize an arr of Option objects
+                        arrOptionObjects = [];
+                        // Loop through all Options for each Question
+                        $(this).find("question").each(function () {
+                            // Initialize an Option object
+
+                            var objOptions = {};
+
+                            // Set properties for the Option object
+                            objOptions.id = $(this).attr("id");
+                            objOptions.displayWord = $(this).attr("sentence");
+                            objOptions.correctAnswer = $(this).attr("correctOption");
+                            // Push the object into the Option Array
+                            arrOptionObjects.push(objOptions);
+                        });
+                        // Assign options property to the Question Object
+                        objQuestion.options = arrOptionObjects;
+                        // Push the Question Object into the Question Object array
+                        arrQuestionObjectsMaster.push(objQuestion);
+                    }
+                    else {
+                        $("#stackContainer").empty();
+                        $("#light-pagination").hide();
+
+                        $("#checkanswer").hide();
+                        $("#scoretime").hide();
+                        $(".completeCourseSection").hide();
+                        $(".form-button").hide();
+
+                        $("#DivMainContent").hide();
+                        $("#noContent").show();
+                    }
+                    //  }
+
+                });
+                buildContentUImat(0, "P", learn);
+            }
+                //To get content for fib type of implementation
+            else {
+                arrQuestionObjects = [];
+                arrQuestionObjectsMaster = [];
+                $(contentData).find("activity").each(function () {
+                    if ($(this).attr("blankposition")) {
+                        if ($(this).attr("adjectiveGroupId") == menuItemID) {
+                            var objQuestion = {};
+
+                            // Initialize a question object
+                            var objQuestion = {};
+
+                            // Set property to the question object
+                            objQuestion.titleText = $(this).attr("titletext");
+                            objQuestion.correctAnswer = $(this).attr("displaytext");
+                            objQuestion.groupId = $(this).attr("adjectiveGroupId");
+                            objQuestion.wordPositions = $(this).attr("blankposition");
+                            objQuestion.display = $(this).attr("display").split(",");
+
+
+
+                            objQuestion.useIn = $(this).attr("use");
+                            objQuestion.isChecked = false;
+                            objQuestion.isCorrect = false;
+                            if ($(this).attr("BloomsTaxonomy")) {
+                                objQuestion.bloomsTaxonomy = $(this).attr("BloomsTaxonomy").split(",");
+                            }
+                            else {
+                                objQuestion.bloomsTaxonomy = "";
+                            }
+
+                            // Push the Question Object into the Question Object array
+                            arrQuestionObjectsMaster.push(objQuestion);
+                        }
+
+                        else {
+                            $("#stackContainer").empty();
+                            $("#light-pagination").hide();
+
+                            $("#checkanswer").hide();
+                            $("#scoretime").hide();
+                            $(".completeCourseSection").hide();
+                            $(".form-button").hide();
+
+                            $("#DivMainContent").hide();
+                            $("#noContent").show();
+                        }
+                    }
+
+                });
+                buildContentUIFib(0, "P", learn);
+            }
+            $("#stage" + currentStage).addClass("stageActive");
+            $("#listage" + currentStage).show();
+
+            if (arrQuestionObjectsMaster.length == 0) {
+                $("#stackContainer").empty();
+                $("#light-pagination").hide();
+                $("#GotoDiv").hide();
+                $("#checkanswer").hide();
+                $("#scoretime").hide();
+                $(".completeCourseSection").hide();
+                $(".form-button").hide();
+                for (var b = 0; b <= 5; b++) {
+                    $(".p" + (b + 1) + "grey > a > img").attr("src", "images/pyramid/pyramid_0" + (b + 1) + "Grey.png");
+                }
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+                return false;
+            }
+            $("#DivMainContent").show();
+            $("#noContent").hide();
+            $("#light-pagination").show();
+            $("#GotoDiv").show();
+            $("#checkanswer").show();
+            $("#scoretime").show();
+            $(".completeCourseSection").show();
+            $(".form-button").show();
+
+        }
+
+        //Build content function for MCQ implementation
+        var questionIndex = 0;
+        function buildContentUICtsMCQ(pageNumber, usedIn, learn) {
+            //$("#learnmode").addClass("disableddiv");
+            //$("#radio-choice-h-2b").css("display", "none");
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+            currentPageNumber = 0;
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            var htmlViewStackContainer = "";
+            var htmlDisplayOptionsContainer = "";
+            var htmlDisplayOption = "";
+            var htmlDisplayTime = "";
+            // toggleLocalClock();
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+
+                
+                currentQuestionObject = arrQuestionObjects[q];
+                // Revisit. Retain older order positions
+                tempOptions = randomSortArray(currentQuestionObject.options.split(","));
+                Corectoption = currentQuestionObject.correctoption;
+                if (currentQuestionObject.displayText == "") {
+                    currentQuestionObject.displayText = "";
+                }
+                else {
+                    currentQuestionObject.displayText = currentQuestionObject.displayText.replace("{", "<span style='text-decoration:underline;'>").replace("}", "</span>");
+                }
+
+
+                var htmlStackPrefix = "<div id='stack" + q + "' style='width:100%'>" + "<h3 style='text-align:center;font-size:1.4em'>" + currentQuestionObject.displayText + "</h3><br/>";
+                var htmlStackSuffix = "</div>";
+
+                htmlBuilder = "";
+                for (var d = 0; d < tempOptions.length; d++) {
+
+                    var dataValue = tempOptions[d];
+                    var widgetId = "rdo_" + d;
+                    var boxid = "box" + widgetId;
+                    var checkedState = "checked";
+                    htmlBuilder += "<div data-item-type='optionradio' id='boption_" + q + "_" + d + "' class='regularBoxradio'><div style='min-width: 40px;height:30px;'><input id='option_" + q + "_" + d + "' name='option_radio" + q + "' type='radio' class='" + radioGroupName + "' value='" + dataValue + "'/><label dataIscrct='" + tempOptions[d] + "' id='label_" + q + "_" + d + "' for='option_" + q + "_" + d + "' class='ui-btn ui-corner-all ui-btn-inherit ui-checkbox-off ui-first-child'>" + dataValue.replace("$", ",").replace("$", ",").replace("{", "<span style='text-decoration:underline;'>").replace("}", "</span>") + "</label></div><div class='insidegumbaz' id='gumbaz_boption_" + q + "_" + d + "'></div></div>";
+
+                }
+
+                htmlBuilder = htmlStackPrefix + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+
+                //if ($(this).attr("type") == "radio") {
+                //    $(this).checkboxradio("option", "iconpos", "none");
+                //}
+
+            }
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackMCQ'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            $("#stackContainer").find("input[type=radio]").checkboxradio();
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+            //To Show Page numer on top of the page
+            qcounter = currentPageNumber + 1;
+            //$("#questioncounter span").html("<h2>Question " + qcounter + " of " + arrQuestionObjects.length + "</h2>");
+            currentQuestionObject = arrQuestionObjects[questionIndex];
+
+
+            $("#stackContainer label").removeClass("ui-btn-icon-left");
+            initPaginator();
+            buildBloomsTaxonomy(0);
+
+
+        }
+        function buildContentUITyp(pageNumber, usedIn, learn) {
+            //$("#learnmode").addClass("disableddiv");
+            //$("#radio-choice-h-2b").css("display", "none");
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+            currentPageNumber = 0;
+            $("#rightAnswer").hide();
+            $("#showAnswer").hide();
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            var htmlViewStackContainer = "";
+            var htmlDisplayOptionsContainer = "";
+            var htmlDisplayOption = "";
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+
+                
+                var arrWordPositions = arrQuestionObjects[q].wordPositions.split(";");
+                var arrWordsInSentence = arrQuestionObjects[q].displayText.split(" ");
+                var correctanswer = arrQuestionObjects[q].correctoption;
+                var htmlStackPrefix = "<div id='stack" + q + "' style='width:100%'>";
+                var htmlStackSuffix = "</div>";
+                htmlBuilder = "";
+                htmlDisplayOption = "";
+                var cout = 0;
+                for (var w = 0; w < arrWordsInSentence.length; w++) {
+                    if (arrWordPositions.indexOf(String(w + 1)) == -1) {
+
+                        if (arrWordsInSentence[w].indexOf("{") != -1) {
+                            arrWordsInSentence[w] = arrWordsInSentence[w].replace("{", "");
+                            htmlBuilder += "<span style='text-decoration:underline;'>";
+                        }
+                        else if (arrWordsInSentence[w].indexOf("}") != -1) {
+                            cout++;
+                            var s = w;
+                            arrWordsInSentence[w] = arrWordsInSentence[w].replace("}", "");
+                        }
+                        if (cout != 0) {
+                            if (arrWordsInSentence[w] == arrWordsInSentence[s + 1]) {
+                                htmlBuilder += "</span>";
+                            }
+                        }
+                        htmlBuilder += "<span class='textonly'>" + arrWordsInSentence[w].replace(/_/g, "") + "</span>&nbsp;";
+                    }
+                    else {
+                        var CorrectValue = arrQuestionObjects[q].correctoption.replace("'", "~");
+                        if (correctanswer.length <= 3) {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBoxSmall' style='display:inline-block;'><div style='min-width:45px;'><input class='keyin textinputSmall' id='txt_" + w + "'  type='text' data-option-rel='' data-enered-value='' correct-value='" + CorrectValue + "' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        } else if (correctanswer.length <= 5) {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBox' style='display:inline-block;'><div style='min-width:60px;'><input class='keyin textinput' id='txt_" + w + "'  type='text' data-option-rel='' data-enered-value='' correct-value='" + CorrectValue + "' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        } else {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBoxLarge' style='display:inline-block;'><div style='min-width:85px;'><input class='keyin textinputLarge' id='txt_" + w + "'  type='text' data-option-rel='' correct-value='" + CorrectValue + "' data-enered-value='' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        }
+                    }
+                }
+                htmlBuilder = htmlStackPrefix + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+            }
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackTyp'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            $("#stackContainer").find("input[type=checkbox]").checkboxradio();
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+            setDefaultTextInputFocus();
+            //To Show Page numer on top of the page
+            qcounter = currentPageNumber + 1;
+            //$("#questioncounter span").html("<h2>Question " + qcounter + " of " + arrQuestionObjects.length + "</h2>");
+            currentQuestionObject = arrQuestionObjects[questionIndex];
+            $("#stackContainer label").removeClass("ui-btn-icon-left");
+            buildBloomsTaxonomy(0);
+            initPaginator();
+        }
+        //Build content function for MAT implementation
+        var questionIndex = 0;
+        function buildContentUImat(pageNumber, usedIn, learn) {
+            //$("#learnmode").removeClass("disableddiv");
+            //$("#radio-choice-h-2b").css("display", "block");
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+            currentPageNumber = 0;
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            var htmlViewStackContainer = "";
+            // toggleLocalClock();
+            //htmlBuilder = "<div class='one' style='display:inline-block'><ul class='sortable list' id='ulleftContent'></ul></div><div class='one' style='display:inline-block'><ul class='sortable list' id='ulrightContent'></ul></div>";
+            //  htmlViewStackContainer = "<div id='myViewStack' class='myViewStack'>";
+
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+               
+                //if (q == pageNumber) {
+                currentQuestionObject = arrQuestionObjects[q];
+
+                var htmlStackPrefix = "<div id='stack" + q + "'>";
+                var htmlStackSuffix = "</div>";
+                var premiseHtml = "";
+                var responseHtml = "";
+                htmlBuilder = "";
+                var arrCorrectAnswer = [];
+                var arrCorrectAnswerUNrandomize;
+                var arrDisplayword;
+
+                for (var d = 0; d < currentQuestionObject.options.length; d++) {
+                    
+                    arrCorrectAnswer.push(currentQuestionObject.options[d].correctAnswer);
+                }
+                if (usedIn == "L") {
+                    arrCorrectAnswer = arrCorrectAnswer;
+                }
+                else {
+                    arrCorrectAnswer = randomSortArray(arrCorrectAnswer);
+                }
+
+                $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+                for (var d = 0; d < currentQuestionObject.options.length; d++) {
+                   
+                    arrCorrectAnswerUNrandomize = currentQuestionObject.options[d].correctAnswer;
+                    arrDisplayword = currentQuestionObject.options[d].displayWord;
+                    premiseHtml += "<li class='premise sortablepremise' data-menu-id='" + currentQuestionObject.options[d].id + "' data-menu-value= '" + arrCorrectAnswerUNrandomize + "'><div class='matchwords'>" + arrDisplayword + "</div></li>";
+                    responseHtml += "<li class='response sortableresponse' ><div class='matchwords'>" + arrCorrectAnswer[d] + "</div></li>";
+                }
+                premiseHtml = "<div style='display:inline-block'><ul class='sortable1'>" + premiseHtml + "</ul></div>";
+                responseHtml = "<div style='display:inline-block'><ul class='sortable2'>" + responseHtml + "</ul></div>";
+                htmlBuilder += premiseHtml + responseHtml;
+
+                htmlBuilder = htmlStackPrefix + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+            }
+
+
+
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackMAT'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+            currentQuestionObject = arrQuestionObjects[questionIndex];
+            initPaginator();
+            buildBloomsTaxonomy(0);
+            $(".sortable2").sortable({
+                items: 'li',
+                connectWith: ".connectedSortable",
+                stop: handleSortStop
+                //placeholder: "ui-state-highlight",
+
+            }).disableSelection();
+
+
+        }
+        function handleSortStop(event, ui) {
+            if ($(ui.item).hasClass("correct")) {
+                $(ui.item).removeClass("correct");
+                $(ui.item).css({ 'position': 'relative', 'left': 0 });
+            }
+            else {
+                $(ui.item).addClass("correct");
+                $(ui.item).css({ 'position': 'relative', 'left': -35 });
+                $(ui.item).addClass("attached");
+            }
+        }
+        //Build content function for CTS implementation
+        var questionIndex = 0;
+        function buildContentUICts(pageNumber, usedIn, learn) {
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+
+            currentPageNumber = 0;
+            $("#rightAnswer").hide();
+            $("#showAnswer").hide();
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            var htmlViewStackContainer = "";
+            var htmlDisplayOptionsContainer = "";
+            var htmlDisplayOption = "";
+            var htmlDisplayTime = "";
+
+            // toggleLocalClock();
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+                
+                if (arrQuestionObjects[q].displayText == "") {
+                    arrQuestionObjects[q].displayText = "";
+                }
+                else {
+                    arrQuestionObjects[q].displayText = arrQuestionObjects[q].displayText;
+
+                }
+                var arrWordsInSentence = arrQuestionObjects[q].display.split(" ");
+
+                var htmlStackPrefix = "<div id='stack" + q + "' style='width:100%'>" + "<h3 style='font-size:1.4em'>" + arrQuestionObjects[q].displayText.replace("{", "<span style='text-decoration:underline;'>").replace("}", "</span>") + "</h3>";
+                var htmlStackSuffix = "</div>";
+
+                htmlBuilder = "";
+
+                for (var d = 0; d < arrWordsInSentence.length; d++) {
+                    var dataValue = arrWordsInSentence[d];
+                    var widgetId = "rdo_" + d;
+                    var checkedState = "checked";
+                    htmlBuilder += "<div id='boption_" + q + "_" + d + "' class='BoxGrammar'><div style='min-width:20px;height:26px;'><input  id='option_" + q + "_" + d + "' type='checkbox' class='" + radioGroupName + "' value='" + dataValue.replace(/'/g, "~") + "'/><label id='label_" + q + "_" + d + "' for='option_" + q + "_" + d + "' class='ui-btn ui-corner-all ui-btn-inherit ui-checkbox-off ui-first-child'>" + dataValue.replace("#"," ") + "</label></div><div></div></div>";
+                }
+
+                htmlBuilder = htmlStackPrefix + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+
+
+            }
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackCTH'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            $("#stackContainer").find("input[type=checkbox]").checkboxradio();
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+            //To Show Page numer on top of the page
+            qcounter = currentPageNumber + 1;
+            //$("#questioncounter span").html("<h2>Question " + qcounter + " of " + arrQuestionObjects.length + "</h2>");
+            currentQuestionObject = arrQuestionObjects[questionIndex];
+
+            $("#stackContainer label").removeClass("ui-btn-icon-left");
+            initPaginator();
+            buildBloomsTaxonomy(0);
+
+        }
+
+
+        //Build content function for FIB implementation
+        var questionIndex = 0;
+        function buildContentUIFib(pageNumber, usedIn, learn) {
+            //$("#learnmode").addClass("disableddiv");
+            //$("#radio-choice-h-2b").css("display", "none");
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+            $("#rightAnswer").hide();
+            $("#showAnswer").hide();
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            var htmlViewStackContainer = "";
+            var htmlDisplayOptionsContainer = "";
+            var htmlDisplayOption = "";
+
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+                
+                var arrWordPositions = arrQuestionObjects[q].wordPositions.split(";");
+                var arrWordsInSentence = arrQuestionObjects[q].correctAnswer.split(" ");
+                var arrDisplayOptions = arrQuestionObjects[q].display;
+                arrDisplayOptions = randomSortArray(arrDisplayOptions);
+                var htmlStackPrefix = "<div id='stack" + q + "' class='stackchild' style='width:100%'>";
+                var htmlStackSuffix = "</div>";
+                var htmlDisplayOptionsContainerPrefix = "<div class='fieldsetContainer'><fieldset data-role='controlgroup' style='text-align: center'  data-type='horizontal' id='optionsContainer" + q + "' class='ui-controlgroup ui-controlgroup-horizontal ui-corner-all'>"
+                var htmlDisplayOptionsContainerSuffix = "</fieldset></div>";
+                htmlBuilder = "";
+                htmlDisplayOption = "";
+                for (var w = 0; w < arrWordsInSentence.length; w++) {
+                    if (arrWordPositions.indexOf(String(w + 1)) == -1) {
+                        htmlBuilder += "<span class='textonly'>" + arrWordsInSentence[w] + "</span>&nbsp;";
+                    }
+                    else {
+                        if (arrWordsInSentence[w].length <= 3) {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBoxSmall' style='display:inline-block;'><div style='min-width:45px;'><input class='keyin textinputSmall' id='txt_" + w + "'  type='text' data-option-rel='' data-enered-value='' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        } else if (arrWordsInSentence[w].length <= 5) {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBox' style='display:inline-block;'><div style='min-width:60px;'><input class='keyin textinput' id='txt_" + w + "'  type='text' data-option-rel='' data-enered-value='' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        } else {
+                            htmlBuilder += "&nbsp;<div id='box' class='regularBoxLarge' style='display:inline-block;'><div style='min-width:85px;'><input class='keyin textinputLarge' id='txt_" + w + "'  type='text' data-option-rel='' data-enered-value='' data-value='" + arrWordsInSentence[w].replace(/'/g, "~") + "'/></div>&nbsp;&nbsp;<div></div></div>";
+                        }
+                    }
+                }
+                for (var d = 0; d < arrDisplayOptions.length; d++) {
+                    htmlDisplayOption += "<input id='option_" + q + "_" + d + "' class='custom' type='checkbox' value='" + arrDisplayOptions[d].replace(/'/g, "~") + "'/><label style='margin:10px !important;padding:5px !important;border-radius:3px !important' id='label_" + q + "_" + d + "' for='option_" + q + "_" + d + "' class='ui-btn ui-corner-all ui-btn-inherit ui-checkbox-off ui-first-child'>" + arrDisplayOptions[d] + "</label>";
+                }
+                htmlDisplayOption = htmlDisplayOptionsContainerPrefix + htmlDisplayOption + htmlDisplayOptionsContainerSuffix;
+                htmlBuilder = htmlStackPrefix + htmlDisplayOption + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+            }
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackFIB'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            $("#stackContainer").find("input[type=checkbox]").checkboxradio();
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+                }
+            });
+            setDefaultTextInputFocus();
+            //To Show Page numer on top of the page
+            qcounter = currentPageNumber + 1;
+            //$("#questioncounter span").html("<h2>Question " + qcounter + " of " + arrQuestionObjects.length + "</h2>");
+            currentQuestionObject = arrQuestionObjects[questionIndex];
+
+            $("#stackContainer label").removeClass("ui-btn-icon-left");
+            buildBloomsTaxonomy(0);
+            initPaginator();
+        }
+        //Build content function for drag and drop implementation
+        var questionIndex = 0;
+        function buildContentUIDrp(pageNumber, usedIn, learn) {
+            //$("#learnmode").addClass("disableddiv");
+            //$("#radio-choice-h-2b").css("display", "none");
+            if (learn == "no") {
+                $("#learnmode").addClass("disableddiv");
+                $("#radio-choice-h-2b").css("display", "none");
+            }
+            currentPageNumber = 0;
+            $("#rightAnswer").hide();
+            $("#showAnswer").hide();
+            $("#stackContainer").empty();
+            // Loop through the questions and build interface
+            arrQuestionObjects = $.grep(arrQuestionObjectsMaster, function (v) {
+                return v.useIn.indexOf(usedIn) >= 0;
+            });
+            if (arrQuestionObjects.length == 0) {
+                $("#DivMainContent").hide();
+                $("#noContent").show();
+            }
+            else {
+                $("#DivMainContent").show();
+                $("#noContent").hide();
+            }
+            var htmlViewStackContainer = "";
+            $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+                var arrWordsInSentence = arrQuestionObjects[q].correctoption.split("#");
+                arrWordsInSentence = randomSortArray(arrWordsInSentence);
+                var htmlStackPrefix = "<div id='stack" + q + "'><div class='sortableWords' id='sortableWords" + q + "'>";
+                var htmlStackSuffix = "</div></div>";
+                htmlBuilder = "";
+                for (var w = 0; w < arrWordsInSentence.length; w++) {
+                    if (arrWordsInSentence[w].length <= 3) {
+                        htmlBuilder += "<div style='float:left' id='box" + w + "' class='regularBoxSmall'>&nbsp;&nbsp;<div style='min-width:45px;'class='dragText" + w + "'><span id='sortablewordstext'>" + arrWordsInSentence[w] + "</span></div><div class='gumbaz'></div></div>";
+                    } else if (arrWordsInSentence[w].length <= 5) {
+                        htmlBuilder += "<div style='float:left' id='box" + w + "' class='regularBox'>&nbsp;&nbsp;<div style='min-width:60px;'class='dragText" + w + "'><span id='sortablewordstext'>" + arrWordsInSentence[w] + "</span></div><div class='gumbaz'></div></div>";
+                    } else {
+                        htmlBuilder += "<div style='float:left' id='box" + w + "' class='regularBoxLarge'>&nbsp;&nbsp;<div style='min-width:85px;'class='dragText" + w + "'><span id='sortablewordstext'>" + arrWordsInSentence[w] + "</span></div><div class='gumbaz'></div></div>";
+                    }
+                }
+                htmlBuilder = htmlStackPrefix + htmlBuilder + htmlStackSuffix;
+                htmlViewStackContainer += htmlBuilder;
+            }
+            htmlViewStackContainer = "<div id='myViewStack' class='myViewStack viewstackDRP'>" + htmlViewStackContainer + "</div>";
+            $("#stackContainer").append(htmlViewStackContainer);
+            var identifier;
+            for (var q = 0; q < arrQuestionObjects.length; q++) {
+                $("#sortableWords" + q).sortable({
+                    start: function (event, ui) {
+                        $(".gumbaz").hide();
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").hide();
+                        identifier = ui.item.attr("id").replace("box", "dragText");
+                        $("." + identifier).css("background-color", "#dd619e");
+                        $("." + identifier).css("color", "#fff");
+                    },
+                    stop: function (event, ui) {
+                        $(".gumbaz").show();
+                        $("#rightAnswer").hide();
+                        $("#showAnswer").hide();
+                        $("." + identifier).css("background-color", "#fbfbfb !important");
+                        $("." + identifier).css("color", "#333 !important");
+                    }
+                });
+                $("#sortableWords" + q).disableSelection();
+            }
+
+            viewStack = $("#myViewStack").viewstack({
+                selectedIndex: 0,
+                creationComplete: function (e, data) {
+
+                },
+                //registering selectedIndex change event
+                selectedIndexChanged: function (e, data) {
+
+                }
+            });
+            //To Show Page numer on top of the page
+            qcounter = currentPageNumber + 1;
+            currentQuestionObject = arrQuestionObjects[0];
+            buildBloomsTaxonomy(0);
+            initPaginator();
+        }
+
+        function randomSortArray(arr) {
+            for (var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+            return arr;
+        };
+
+
+        function buildBloomsTaxonomy(pageNumber) {
+            for (var b = 0; b <= 5; b++) {
+                $(".p" + (b + 1) + "grey > a > img").attr("src", "images/pyramid/pyramid_0" + (b + 1) + "Grey.png");
+                $(".g" + (b + 1) + " > div > p").removeClass();
+                $(".g" + (b + 1) + " > div > p").addClass("btContentGrey");
+            }
+
+
+
+            for (var b = 0; b < arrQuestionObjects[pageNumber].bloomsTaxonomy.length; b++) {
+                var blockId = arrQuestionObjects[pageNumber].bloomsTaxonomy[b];
+                var newBlockId = bloomPlaceholders[parseInt(blockId) - 1];
+                var oldImage = $(".p" + newBlockId + "grey > a > img").attr("src");
+                var newImage = oldImage.replace("Grey.png", ".png");
+                $(".p" + newBlockId + "grey > a > img").attr("src", newImage);
+                flag[blockId - 1] = false;
+            }
+            flag.reverse();
+            for (var t = 0; t < 6; t++) {
+                updateTooltipTheme(t + 1, flag[t], bloomsTaxonomyContentText[t][0]);
+            }
+            flag.reverse();
+        }
+
+
+        function updateTooltipTheme(idSuffix, isDisabled, content1, content2) {
+            var themeName = "";
+            if (isDisabled == true) {
+                themeName = "tooltipster-bloom-grey";
+            }
+            else {
+                themeName = "tooltipster-bloom-" + idSuffix;
+            }
+
+            $("#bloom_" + idSuffix).tooltipster({
+                theme: themeName,
+                position: "top",
+                multiple: true,
+                touchDevices: true,
+                contentAsHTML: true,
+                content: content1
+            });
+
+            var bloomTooltipsterObjects = $("#bloom_" + idSuffix).tooltipster({
+                theme: themeName,
+                multiple: true,
+                position: "bottom",
+                contentAsHTML: true,
+                touchDevices: true,
+                content: content2
+            });
+        }
+
+        function buildCorrectAnwer(pageNumber) {
+            $("#backtohome").show();
+            $("#checkanswer").hide();
+            $("#light-pagination").hide();
+            $("#showAnswer").hide();
+            //if (q == pageNumber) {
+            $("#correctAnswerContainer").empty();
+            var correctAnswerObject = arrQuestionObjects[pageNumber];
+            var htmlStackPrefix = "<div id='correctanswerdivparent'>";
+            var htmlStackSuffix = "</div>";
+            var premiseHtml = "";
+            var responseHtml = "";
+            var correctAnswerHtmlBuilder = "";
+
+            for (var d = 0; d < correctAnswerObject.options.length; d++) {
+                premiseHtml += "<li class='premise'  id='p " + (d + 1) + "' data-menu-id='" + correctAnswerObject.options[d].id + "'><div class='matchwords'>" + correctAnswerObject.options[d].displayWord + "</div></li>";
+                responseHtml += "<li class='response' id='r" + (d + 1) + "' ><div class='matchwords'>" + correctAnswerObject.options[d].correctAnswer + "</div></li>";
+            }
+            premiseHtml = "<div style='display:inline-block'><ul class='sortable1'>" + premiseHtml + "</ul></div>";
+            responseHtml = "<div style='display:inline-block'><ul class='sortable2'>" + responseHtml + "</ul></div>";
+            correctAnswerHtmlBuilder += premiseHtml + responseHtml;
+
+            correctAnswerHtmlBuilder = htmlStackPrefix + correctAnswerHtmlBuilder + htmlStackSuffix;
+            $("#correctAnswerContainer").append(correctAnswerHtmlBuilder);
+        }
+        function initPaginator() {
+
+            $("#light-pagination").pagination({
+                items: arrQuestionObjects.length,
+                itemsOnPage: 1,
+                displayedPages: 3,
+                pages: arrQuestionObjects.length,
+                prevText: "<",
+                nextText: ">",
+                cssStyle: 'light-theme',
+                onPageClick: function (pageNumber, event) {
+                    $("#rightAnswer").hide();
+                    $("#showAnswer").hide();
+                    controlCounter = 0;
+                    currentPageNumber = pageNumber - 1;
+                    setDefaultTextInputFocus();
+                    $("#myViewStack").viewstack("option", "selectedIndex", currentPageNumber);
+                    qcounter = currentPageNumber + 1;
+
+                    if (qcounter == arrQuestionObjects.length)
+                        $(".next").addClass("ui-disabled");
+                    else
+                        $(".next").removeClass("ui-disabled");
+
+                    if (qcounter == 1)
+                        $(".prev").addClass("ui-disabled");
+                    else
+                        $(".prev").removeClass("ui-disabled");
+
+                    currentQuestionObject = arrQuestionObjects[currentPageNumber];
+                    $("#headertext span").html("<h3>" + arrQuestionObjects[currentPageNumber].titleText + "</h3>");
+                    buildBloomsTaxonomy(currentPageNumber);
+                }
+            });
+            currentQuestionObject.checkedOptionId = "";
+            $(".prev").addClass("ui-disabled");
+        }
+
+
+        var arrTextControls = [];
+
+        function setDefaultTextInputFocus() {
+
+            activeTextInput = $("#stack" + currentPageNumber).find('.keyin')[0];
+
+
+        }
+    </script>
+
+    <style>
+        .viewstackFIB wrongBox {
+            border: 1px solid red;
+        }
+
+        .ui-btn-corner-all, .ui-btn.ui-corner-all, .ui-slider-track.ui-corner-all, .ui-flipswitch.ui-corner-all, .ui-li-count {
+            border-radius: 0em !important;
+        }
+
+        .ui-btn-icon-left {
+            padding-left: 1em !important;
+        }
+
+        .ui-page-theme-a .ui-btn:hover, html .ui-bar-a .ui-btn:hover, html .ui-body-a .ui-btn:hover, html body .ui-group-theme-a .ui-btn:hover, html head + body .ui-btn.ui-btn-a:hover {
+            /*background-color: #38c !important;
+            border-color: #38c !important;*/
+            color: #fff !important;
+        }
+
+        ui-btn, label.ui-btn {
+            font-weight: 500 !important;
+            font-size: 1.4em !important;
+            background-color: #e7edf4 !important;
+        }
+
+            ui-btn, label.ui-btn:hover {
+                text-shadow: none !important;
+            }
+
+        .ui-icon-check:after, html .ui-btn.ui-checkbox-on.ui-checkbox-on:after {
+            visibility: hidden !important;
+        }
+
+        .ui-btn.ui-checkbox-off:after {
+            visibility: hidden;
+        }
+
+        .ui-checkbox-off {
+            background: #fff !important;
+            font-size: 17px !important;
+            font-weight: 400 !important;
+        }
+
+        .ui-checkbox-on {
+            font-size: 17px !important;
+            font-weight: 400 !important;
+        }
+
+        .ui-checkbox label:hover {
+            font-weight: 400 !important;
+        }
+
+        body {
+            font-family: 'OpenSans-Regular' !important;
+        }
+
+        .BoxGrammar {
+            display: inline-block;
+            margin-right: 3px !important;
+        }
+
+        .hintcont {
+            position: relative;
+            top: -50px;
+        }
+
+        ui-checkbox label {
+            background-color: #e7edf4 !important;
+        }
+
+        .correctBox {
+            display: inline-block;
+            margin-right: 4px !important;
+        }
+
+        .wrongBox {
+            display: inline-block;
+            margin-right: 4px !important;
+        }
+
+            .wrongBox > div {
+                padding: 0px !important;
+                border-radius: 3px;
+                border: 0.1em solid #E2F9DA !important;
+                background-color: #E2F9DA;
+            }
+
+        .correctBox > div {
+            padding: 0px !important;
+            border-radius: 3px;
+            border: 0.1em solid #E2F9DA !important;
+            background-color: #E2F9DA;
+        }
+
+
+        .ui-checkbox label:hover {
+            background-color: #64ce80 !important;
+            color: #fff !important;
+            text-shadow: none !important;
+        }
+
+        .ui-btn {
+            padding: 0.1em 0.1em !important;
+            line-height: 1.4 !important;
+        }
+
+        .ui-checkbox .ui-btn {
+            /*margin-top:-6px !important;*/
+            min-width: 30px !important;
+            margin-right: 0px !important;
+            text-align: center !important;
+        }
+
+        .ui-btn, label.ui-btn {
+            border-style: none !important;
+        }
+
+        .ui-checkbox {
+            margin: 0px 0px 0px 0px !important;
+            border-radius: 3px !important;
+        }
+
+        .correctBox > div + div {
+            width: 2.4em;
+            height: 1.3em;
+            border: 0.1em solid #999999;
+            left: 1.1em;
+            top: -1.5em;
+        }
+
+        .wrongBox > div + div {
+            width: 2.4em;
+            height: 1.3em;
+            border: 0.1em solid #999999;
+            left: 1.1em;
+            top: -1.5em;
+        }
+
+        #hintContainer {
+            float: right;
+            background-color: #e4e0b4;
+        }
+
+
+        /*today for button need to put in css*/
+        .ui-grid-a {
+            overflow: initial !important;
+        }
+
+        .radiobtn {
+            padding: 2px 3px !important;
+            border: 1px solid #bbb !important;
+            background-color: #e6f7ff !important;
+            line-height: 29px !important;
+        }
+
+        .ui-controlgroup-controls {
+            margin-top: -1px;
+        }
+
+        .ui-radio .ui-btn.ui-radio-on:after {
+            display: none !important;
+        }
+
+        .ui-radio .ui-btn.ui-radio-on {
+            background-color: #dd619e !important;
+            font-size: 16px !important;
+        }
+
+        .ui-btn.ui-radio-off:after {
+            display: none !important;
+        }
+
+        .ui-radio label {
+            margin-top: -9px !important;
+            height: 23px !important;
+            border-radius: 0px !important;
+            font-size: 20px;
+            padding-left: 10px !important;
+        }
+
+        .ui-radio .ui-radio-on {
+            height: 24px !important;
+            padding: 4px !important;
+        }
+
+        .ui-radio label:hover {
+            text-shadow: none !important;
+            background-color: #64ce80 !important;
+            color: #fff !important;
+        }
+
+        .ui-radio .ui-btn {
+            background-color: #e7edf4;
+        }
+
+        .ui-radio-off {
+            margin-top: -20px !important;
+            padding: 5px !important;
+            border-radius: 0px !important;
+            background-color: #e7edf4 !important;
+        }
+
+        .controlbuttons .ui-controlgroup-controls .ui-radio .ui-radio-on {
+            padding: 4px !important;
+        }
+
+        .regularBoxradio {
+            width: 55%;
+            margin: 0px auto;
+        }
+
+        .ui-radio .ui-radio-off {
+            font-weight: 500 !important;
+            color: #000000;
+        }
+
+        .ShowCheckDiv {
+            clear: both;
+        }
+
+        .disableddiv {
+            pointer-events: none !important;
+            opacity: 0.2 !important;
+        }
+
+        .sortable1, .sortable2 {
+            border-style: none;
+            width: 142px;
+            min-height: 20px;
+            list-style-type: none;
+            margin: 0;
+            padding: 5px 0 0 0;
+            float: left;
+        }
+
+            .sortable1 li {
+                margin: -3px 5px -2px 5px;
+                padding-top: 14%;
+                text-align: center;
+                font-size: 1.1em;
+                width: 320px;
+                height: 58px;
+                background: url("img/img_01_hover.png") no-repeat center center;
+                cursor: pointer;
+                background-size: contain;
+                cursor: pointer;
+                word-break: break-word;
+            }
+
+            .sortable2 li {
+                margin: 0px 5px -4px 195px;
+                /* margin-bottom: -5px; */
+                padding-top: 20px;
+                text-align: center;
+                font-size: 1.1em;
+                width: 277px;
+                height: 59px;
+                /*background: url("img/img_02.png") no-repeat center center;*/
+                cursor: pointer;
+                /*background-size: contain;*/
+                cursor: pointer;
+                word-break: break-word;
+            }
+
+        .hrbtm {
+            margin-bottom: 10px;
+        }
+
+        /*.sortable2 li:hover {
+                    background: url("img/img_02_hover.png") no-repeat center center;
+                    background-size: contain;
+                }*/
+
+        .sortable1Updated {
+            margin: 0 5px -30px 25px !important;
+        }
+
+        .sortable2Updated {
+            margin: 0 5px -30px 135px !important;
+        }
+
+        .matchwords {
+            text-align: center;
+            word-wrap: break-word;
+            padding: 0px 15px;
+        }
+
+        .response {
+            background: url("img/img_02.png") no-repeat center center;
+            background-size: contain;
+        }
+
+            .response:hover {
+                background: url("img/img_02_hover.png") no-repeat center center;
+                background-size: contain;
+            }
+
+        .responseCorrect {
+            background: url("img/img_02_correct.png") no-repeat center center;
+            background-size: contain;
+        }
+
+        .responseWrong {
+            background: url("img/img_02_wrong.png") no-repeat center center;
+            background-size: contain;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+
+    <!--header start-->
+    <div data-role="header" data-position="fixed" class="main-header headerm">
+        <div class="container-full">
+            <div class="logo-left"><a class="logo-brand" rel="external" href="#"><img alt="logo" src="images/flow-english-logo.png"></a></div>
+            <div class="logo-right"><a class="logo-brand" rel="external" href="#"><img alt="logo" src="images/chipper-sage-logo.png"></a></div>
+            <h1 class="firstTitle">
+                Flow Of English -
+                <span class="secondTitle">Learner</span>
+            </h1>
+        </div>
+    </div>
+    <!--header end-->
+
+
+    <div style="clear:both"></div>
+
+    <!--title bar start-->
+    <div class="title-bar">
+        <div class="container-full">
+            <div class="page-row">
+                <div class="column-1">
+                    <!--Timer code-->
+                    <div id="globalholder" style="font-size:15px;height:22px; padding-top:10px;display:none"></div>
+                    <div id="mytimerholder" style="font-size:15px;height:22px;padding-top:10px;display:none "></div>
+                    <!--Timer end -->
+                </div>
+                <div class="column-2">
+                    <div class="page-flow">
+                        <ul>
+                            <li><a rel="external" href="#">Skills</a></li>
+                            <li>»</li>
+                            <li><a rel="external" href="#">Grammar</a></li>
+
+                            <li>»</li>
+                            <li><a style="color:#fff !important" href="#">Adjectives</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--title bar end-->
+
+
+    <div class="main-content">
+        <div class="container-full">
+
+            <!--left menu item start-->
+            <div id="DivLeft" class="col-left">
+                <div id="D-left">
+                    <a href="#" id="toggle4">Themes<span class="mob-menu-icon"><img src="images/nav-icon.png" /></span></a>
+                    <div class="toggle4">
+                        <div id="cssmenu">
+                            <p class="themes">Themes</p>
+                            <ul id="ulMenuItem"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--left menu item end-->
+            <!--main container start-->
+            <div id="DivMain" class="col-middle">
+                <div id="DivMainContent" style="background:url(img/skills.png);background-size:cover;">
+                    <div id="insidecontainer" class="vacabulary">
+                        <div id="topictext">
+                            <span></span>
+                        </div>
+
+                        <div id="hintContainer" style="display:none;">
+                            <img src="images/hintersmall.png" width="24" height="44" />
+                            <label></label>
+                        </div>
+                        <br />
+                        <div id="headertext">
+                            <span></span>
+                            <hr class="hrbtm" />
+                        </div>
+                        <div id="titleContainer">
+                        </div>
+                        <div id="stackContainer">
+                        </div>
+                        <div id="correctAnswerContainer" style="display:none;">
+                        </div>
+                        <div class="ShowCheckDiv">
+
+
+                            <a href="#" id="rightAnswer" data-role="button" data-inline="true" class="correctdiv" style="border-radius:3px !important;">
+                                <div style="padding:0.7em 1em !important" class="bottom-menu-icon glyph-icon hand-right">Show Correct Answer</div>
+                            </a>
+                            <a href="#" id="rightAnswer_mat" data-role="button" data-inline="true" class="correctdiv" style="border-radius:3px !important;">
+                                <div style="padding:0.7em 1em !important" class="bottom-menu-icon glyph-icon hand-right">Show Correct Answer</div>
+                            </a>
+                            <a href="#" id="checkanswer" data-role="button" data-inline="true" style="float:right !important;border-radius: 5em !important;padding: 12px 14px !important;" class="checkdiv">
+                                <div class="bottom-menu-icon glyph-icon flaticon-tick7"></div>Check
+                            </a>
+                            <a href="#" id="backtohome" data-role="button" data-inline="true" style=" border-radius: 3px !important;display:none;padding:.7em 3.5em!important;margin-top:1.3em;" class="backanswerdiv">
+                                <div class="bottom-menu-icon glyph-icon hand-right"></div>Back
+                            </a>
+
+                            <a href="#" id="showAnswer" data-role="button" data-inline="true" class="showanswerdiv" style="border-radius:3px !important;display:none;    padding: 0.7em 1em !important;">
+                                <div class="bottom-menu-icon glyph-icon hand-right"><span id="dispalyAnswer"></span></div>
+                            </a>
+                        </div>
+                    </div>
+                    <div data-role="popup" id="popupDialog" class="finishpop" data-transition="pop" data-dismissible="false">
+                        <a href="#" data-rel="back" style="border-radius:2em !important;padding:0px !important" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right popdclose">Close</a>
+                        <div data-role="header" class="pop-header">
+                            <h1>Your Score</h1>
+                        </div>
+                        <div role="main" id="scorecontainer" style="text-align:center;">
+                            <h3 class="ui-title scorefnt">You scored</h3>
+                            <!-- <span><span> -->
+                            <a href="#" class="btn-Okgreen button-stl ui-link popokbtn" data-rel="back">OK</a>
+                        </div>
+                    </div>
+                    <div id="videocontainer" style="display:none">
+                        <video id="PlayVideo" style="width:90%" controls>                     
+                            <source id="videosrc" src="" type="video/mp4">
+          
+                        </video>
+                    </div>
+                </div>
+                <div id="noContent" style="display:none;background:url(img/skills.png);background-size:cover;">
+                    <div class="vacabulary">
+                        <div id="notextData">
+                            <span><img alt="No data" src="images/NoData.png"></span>
+                            <p>There are no activites for this section and stage you have selected.</p>
+                        </div>
+                    </div>
+                </div>
+                <!--pagination and buton start-->
+                <div style="width:100%;">
+                    <div class="form-button controlbuttons" style="width:40%;float:left">
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <!--The following code is added for cloodon build-->
+                            <!--<div class="tooltipteach" style="height:auto">
+                                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2a" value="other">
+                                <span class="tooltip-content-teach">You are in teach Mode!</span>
+                                <label id="teachmode" class="radiobtn" for="radio-choice-h-2a">Teach</label>
+                            </div>-->
+                            <!--The following code is added for cloodon build-->
+
+                            <!--<div class="tooltiplearn" style="height:auto">
+                                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2b" value="other">
+                                <span class="tooltip-content-learn">You are in Learn Mode!</span>
+                                <label id="learnmode" class="radiobtn" for="radio-choice-h-2b">Learn</label>
+                            </div>-->
+                            <div class="tooltipPractice" style="height:auto">
+                                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2c" style="display:none;" value="on" checked="checked">
+                                <!--<span class="tooltip-content-Practice">You are in Practice Mode!</span>-->
+                                <label id="practicemode" class="radiobtn" style="pointer-events: none; opacity: 0.4;" for="radio-choice-h-2c">Practice</label>
+                            </div>
+                            <!--<div class="tooltiptest" style="height:auto">
+                                <input type="radio" name="radio-choice-h-2" id="radio-choice-h-2d" value="other">
+                                <span class="tooltip-content-test">You are in Test Mode!</span>
+                                <label id="testmode" class="radiobtn" for="radio-choice-h-2d">Test</label>
+                            </div>-->
+                        </fieldset>
+                    </div>
+                    <div class="main-pagenation rightpagination" title="Click on the ellipses(3 dots) to specify a page number">
+                        <div id="light-pagination" class="pagination"></div>
+                    </div>
+                </div>
+                <!--pagination and buton start-->
+
+
+
+
+            </div>
+            <!--main container end-->
+            <!--Right side container start-->
+            <div id="DivRight" class="col-right">
+                <div class="stage-class">
+                    <ul>
+                        <li><h3>Stage</h3></li>
+                        <li><a id="stage0" class="disableStage" title="Foundation">0</a></li>
+                        <li><a id="stage1" rel="external" href="Adjectives-2.html?stg=1" title="Stage1">1</a></li>
+                        <li><a id="stage2" class="disableStage" title="Stage2">2</a></li>
+                        <li><a id="stage3" class="disableStage" title="Stage3">3</a></li>
+                        <li><a id="stage4" class="disableStage"  title="Stage4">4</a></li>
+                        <li><a id="stage5" class="disableStage"  title="Stage5">5</a></li>
+                    </ul>
+                </div>
+                <div class="stage-class bloom_pyramid">
+                    <div id="bloom_1" class="p1grey"><a id="lnkBTfirstgrey" href="#popupBTfirst" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_01Grey.png" style="width:100%;"></a></div>
+                    <div id="bloom_2" class="p2grey"><a id="lnkBTsecondgrey" href="#popupBTsecond" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_02Grey.png" style="width:100%;"></a></div>
+                    <div id="bloom_3" class="p3grey"><a id="lnkBTthirdgrey" href="#popupBTthird" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_03Grey.png" style="width:100%;"></a></div>
+                    <div id="bloom_4" class="p4grey"><a id="lnkBTfourthgrey" href="#popupBTfourth" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_04Grey.png" style="width:100%;"></a></div>
+                    <div id="bloom_5" class="p5grey"><a id="lnkBTfifthgrey" href="#popupBTfifth" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_05Grey.png" style="width:100%;"></a></div>
+                    <div id="bloom_6" class="p6grey"><a id="lnkBTsixthgrey" href="#popupBTsixth" data-rel="popup"><img alt="logo" src="images/pyramid/pyramid_06Grey.png" style="width:100%;"></a></div>
+                </div>
+                <div class="stage-class" id="scoretime">
+                    <h4 class="inner-heading head-bg">Score & Time</h4>
+                    <div id="totScore" class="score"></div>
+                    <!--Timer code-->
+                    <div id="globalClock" class="time">0:0 </div>
+                    <div id="localClock" style="display:none" class="time">0:0 <span>Min</span></div>
+                    <!--Timer end -->
+                </div>
+                <div class="stage-class" id="cmpltactivity">
+                    <a style="cursor:pointer;" id="finish"><div class="completeCourseSection"><div class="bottom-menu-icon glyph-icon flaticon-running3"></div>Complete Activity</div></a>
+                </div>
+            </div>
+            <!--Right side container end-->
+
+
+        </div>
+    </div>
+
+    <!---footer start-->
+    <div data-position="fixed" data-role="footer" class="footer">
+        <div class="container-full">
+            <div class="text-right footer-light">
+                <!--<div class="logged-in">You are logged in as : <span class="value"> John Smith</span></div>
+                <div class="subscription">Subscription : <span class="value"> Stage2</span></div>
+                <div class="valid-until">Valid Until : <span class="value"> Aug 18, 2016</span></div>-->
+                <div class="footer-text"><p class="text-muted">Â© 2015 Flow of English.  All Rights Reserved</p></div>
+            </div>
+        </div>
+    </div>
+    <!--footer End-->
+    <!--Timer code-->
+    <script type="text/javascript" src="js/timer.js"></script>
+    <!--Timer end -->
+    <!-- Drag and Drop for tablet - Remya -->
+    <!--<script>
+        function touchHandler(event) {
+            var touches = event.changedTouches,
+               first = touches[0],
+               type = "";
+
+            var d = new Date();
+            switch (event.type) {
+                case "touchstart": type = "mousedown"; lastTouchDown = d.getTime(); break;
+                case "touchmove": type = "mousemove"; lastTouchDown = -1; break;
+                case "touchend": if (lastTouchDown > -1 && (d.getTime() - lastTouchDown) < clickms) { lastTouchDown = -1; type = "click"; break; } type = "mouseup"; break;
+                default: return;
+            }
+            var simulatedEvent = document.createEvent("MouseEvent");
+            simulatedEvent.initMouseEvent(type, true, true, window, 1,
+                                      first.screenX, first.screenY,
+                                      first.clientX, first.clientY, false,
+                                      false, false, false, 0/*left*/, null);
+
+            first.target.dispatchEvent(simulatedEvent);
+            event.preventDefault();
+        }
+
+        function init() {
+            document.addEventListener("touchstart", touchHandler, true);
+            document.addEventListener("touchmove", touchHandler, true);
+            document.addEventListener("touchend", touchHandler, true);
+            document.addEventListener("touchcancel", touchHandler, true);
+        }
+
+    </script>-->
+    <!-- Drag and Drop for tablet - Remya -->
+</body>
+</html>

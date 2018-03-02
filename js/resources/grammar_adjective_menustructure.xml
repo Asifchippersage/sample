@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <menuitem id="adjective" title="Adjective" test="no">
+    <!--Implementation Type (impType); cts-click to select; mcq-multiple choice question; typ-type; mat-match; fib-fill in the blanks-->
+    
+    <menuitem adjectiveGroupId="adjective_2a" learn="no" teach="no" videoSource=".mp4" stage="1" impType="cts" title="Quality, Quantity - Basic" excludeFromDemo="false"/>
+    <menuitem adjectiveGroupId="adjective_2b" learn="no" teach="no" videoSource=".mp4" stage="1" impType="mcq" title="Quality, Quantity - Intermediate" excludeFromDemo="false"/>
+   <menuitem adjectiveGroupId="adjective_2c" learn="no" teach="no" videoSource=".mp4" stage="1" impType="mcq" title="Quality, Quantity - Advanced" excludeFromDemo="false"/>
+    
+  </menuitem>
+</root>
